@@ -1,0 +1,58 @@
+[
+    {
+        "name": "Dashboard",
+        "url": "/dashboard",
+        "icon": "dashboard"
+    },
+    {
+        "name": "Inventory",
+        "url": "/inventory",
+        "icon": "inventory",
+        "subPages": [
+            {
+                "name": "Products",
+                "url": "/inventory/products"
+            },
+            {
+                "name": "Categories",
+                "url": "/inventory/categories"
+            },
+            {
+                "name": "Brands",
+                "url": "/inventory/brands"
+            }
+        ]
+    },
+    {
+        "name": "Users",
+        "url": "/users",
+        "icon": "people",
+        "subPages": [
+            {
+                "name": "User List",
+                "url": "/users"
+            },
+            {
+                "name": "Roles",
+                "url": "/users/roles"
+            }
+        ]
+    },
+    {
+        "name": "Subscriptions",
+        "url": "/subscriptions",
+        "icon": "subscriptions",
+        "subPages": [
+            {
+                "name": "Subscription",
+                "url": "/subscriptions",
+                "icon": "subscriptions"
+            },
+            {
+                "name": "Payments",
+                "url": "/subscriptions/payments",
+                "icon": "payment"
+            }
+        ]
+    }
+]
