@@ -2,39 +2,49 @@
     {
         "name": "Dashboard",
         "url": "/dashboard",
-        "icon": "dashboard"
+        "icon": "LayoutPanelLeft"
     },
     {
         "name": "Inventory",
         "url": "/inventory",
-        "icon": "inventory",
+        "icon": "Package",
         "subPages": [
             {
                 "name": "Products",
-                "url": "/inventory/products"
+                "url": "/inventory/products",
+                "icon": "Package"
             },
             {
                 "name": "Categories",
-                "url": "/inventory/categories"
+                "url": "/inventory/categories",
+                "icon": "SquareStack"
             },
             {
                 "name": "Brands",
-                "url": "/inventory/brands"
+                "url": "/inventory/brands",
+                "icon": "Package"
             }
         ]
+    },{
+        "name": "Reports",
+        "url": "/reports",
+        "icon": "AreaChart"
+
     },
     {
         "name": "Users",
         "url": "/users",
-        "icon": "people",
+        "icon": "User",
         "subPages": [
             {
                 "name": "User List",
-                "url": "/users"
+                "url": "/users",
+                "icon": "User"
             },
             {
                 "name": "Roles",
-                "url": "/users/roles"
+                "url": "/users/roles",
+                "icon": "UserCog"
             }
         ]
     },
@@ -51,7 +61,7 @@
             {
                 "name": "Payments",
                 "url": "/subscriptions/payments",
-                "icon": "payment"
+                "icon": "CreditCard"
             }
         ]
     }

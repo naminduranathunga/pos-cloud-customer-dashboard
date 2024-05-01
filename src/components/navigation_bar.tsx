@@ -1,4 +1,3 @@
-import { User2 } from "lucide-react";
 import NavbarUserBtn from "./navbar_user_btn";
 
 

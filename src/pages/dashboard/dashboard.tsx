@@ -1,4 +1,5 @@
 
+import NotificationComponent from "@/components/dashboard/NotificationComponents";
 import "chart.js/auto";
 import { Line, Doughnut } from 'react-chartjs-2';
 
@@ -86,6 +87,8 @@ export default function Dashboard() {
                         <Doughnut data={doughnut_data} options={chart_options} /> 
                     </div>
                 </div>
+
+                <NotificationComponent />
                 
             </div>
         </div>

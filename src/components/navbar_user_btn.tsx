@@ -6,7 +6,7 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
   } from "@/components/ui/dropdown-menu"
-import { ChevronDown, User2 } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 import usre_default_avatar from "@/assets/user_default_avatar.png";
 
 export default function NavbarUserBtn() {

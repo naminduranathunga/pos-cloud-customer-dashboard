@@ -1,4 +1,3 @@
-import { BookDashed } from "lucide-react";
 import {
     Accordion,
     AccordionContent,
@@ -6,7 +5,8 @@ import {
     AccordionTrigger,
   } from "@/components/ui/accordion"
 import pages from "@/assets/pages.json";
-import { Link } from 'react-router-dom';
+import SideBarItem from "./sidebar_item";
+import SideBarAccordionItem from "./sidebar_item_accordion";
 
 interface PageData {
     name: string;
@@ -15,13 +15,11 @@ interface PageData {
     subPages?: PageData[];
 };
 
+
 function get_page_element(page: PageData) {
     if (typeof (page.subPages) === 'undefined') {
         return (
-            <li className="flex gap-2 py-2 px-4 hover:bg-green-800 cursor-pointer transition duration-300">
-                <BookDashed />
-                <Link to={page.url}>{page.name}</Link>
-            </li>
+            <SideBarItem name={page.name} url={page.url} icon={page.icon} />
         );
     } else {
         let sp = page.subPages as PageData[];
@@ -30,8 +28,7 @@ function get_page_element(page: PageData) {
         return (<Accordion type="single" collapsible>
             <AccordionItem value="item-1" className="border-none">
                 <AccordionTrigger className="lex gap-2 py-2 px-4 hover:bg-green-800 cursor-pointer transition duration-300">
-                    <div className="flex gap-2 items-center"><BookDashed />
-                    <span>{page.name}</span></div>
+                    <SideBarAccordionItem name={page.name} icon={page.icon} />
                 </AccordionTrigger>
                 <AccordionContent>
                     <ul className="px-4">
@@ -49,7 +46,7 @@ export default function SideBarList() {
     });
 
     return (
-        <ul className="flex flex-col my-4">
+        <ul className="flex flex-col my-4 gap-2">
             {page_list}            
         </ul>
     )
