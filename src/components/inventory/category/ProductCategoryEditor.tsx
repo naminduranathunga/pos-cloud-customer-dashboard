@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import ProductCategory from "@/interfaces/product_category";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { ProductCategorySelector } from "./ProductCategorySelector";
 import {
     Dialog,
@@ -13,22 +13,27 @@ import {
     DialogTrigger,
   } from "@/components/ui/dialog"
 
-export default function ProductCategoryEditor({category, category_list, with_trigger, onSave, onCancel}:
+export default function ProductCategoryEditor({category, category_list, with_trigger, onSave, onCancel, onClose}:
     {
         category: ProductCategory, 
         category_list:ProductCategory[], 
         with_trigger?: boolean,
         onSave?: (category: ProductCategory) => void, 
-        onCancel?: () => void}) {
+        onCancel?: () => void
+        onClose?: () => void
+    }) {
         
         const [cName, setCName] = useState(category.name);
         const [parent, setParent] = useState(category.parent?.id || "");
 
         if (typeof with_trigger === "undefined") with_trigger = true;
+        const onOpenChange = useCallback((open:boolean) => {
+            if (!open && onClose) onClose();
+        }, [onClose]);
 
         return (
 
-            <Dialog defaultOpen={(!with_trigger)}>
+            <Dialog defaultOpen={(!with_trigger)} onOpenChange={onOpenChange}>
                 {with_trigger && <DialogTrigger>Open</DialogTrigger>}
                 <DialogContent>
                     <DialogHeader>

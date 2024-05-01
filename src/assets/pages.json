@@ -51,12 +51,12 @@
     {
         "name": "Subscriptions",
         "url": "/subscriptions",
-        "icon": "subscriptions",
+        "icon": "ReceiptText",
         "subPages": [
             {
                 "name": "Subscription",
                 "url": "/subscriptions",
-                "icon": "subscriptions"
+                "icon": "Puzzle"
             },
             {
                 "name": "Payments",

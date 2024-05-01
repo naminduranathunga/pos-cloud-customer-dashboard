@@ -8,10 +8,15 @@ import {
     TableRow,
   } from "@/components/ui/table"
 import ProductCategory from "@/interfaces/product_category";
+import { useEffect, useState } from "react";
+import ProductCategoryEditor from "./ProductCategoryEditor";
 
 
-export default function ProductCategoryTable(){
-    const categories : ProductCategory[] = [
+export default function ProductCategoryTable({searchTerm}: {searchTerm?: string}){
+    const [showEditor, setShowEditor] = useState(false);
+    const [editingCategory, setEditingCategory] = useState<ProductCategory | null>(null);
+
+    const categories_ : ProductCategory[] = [
         {
             id: "1",
             name: "Electronics",
@@ -41,6 +46,13 @@ export default function ProductCategoryTable(){
             parent: null
         }
     ];
+    const [categories, setCategories] = useState<ProductCategory[]>([]);
+
+    useEffect(()=>{
+        if (!searchTerm) return setCategories(categories_);
+        const filtered = categories_.filter((category) => category.name.toLowerCase().includes(searchTerm.toLowerCase()));
+        setCategories(filtered);
+    }, [searchTerm, categories_]);
 
     const rows = categories.map((category) => {
         return (
@@ -49,7 +61,9 @@ export default function ProductCategoryTable(){
                 <TableCell>{category.name}</TableCell>
                 <TableCell>{category.parent?.name || "-"}</TableCell>
                 <TableCell className="text-right">
-                    <button className="text-blue-500 hover:text-primary hover:underline transition">Edit</button>
+                    <button className="text-blue-500 hover:text-primary hover:underline transition"
+                        onClick={(e)=>{setEditingCategory(category);setShowEditor(true)}}
+                        >Edit</button>
                 </TableCell>
             </TableRow>
         )
@@ -74,6 +88,13 @@ export default function ProductCategoryTable(){
             <div className="flex justify-center">
 
             </div>
+
+            { showEditor && <ProductCategoryEditor 
+                    category={editingCategory!} 
+                    category_list={categories} 
+                    with_trigger={false} 
+                    onSave={()=>{/**update the list */}} 
+                    onClose={()=>setShowEditor(false)} /> }
         </div>
     )
 }

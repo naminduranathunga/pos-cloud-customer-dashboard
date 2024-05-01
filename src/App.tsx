@@ -3,6 +3,7 @@ import LoginPage from "./pages/login/login";
 import PageLayout from "./pages/Layout";
 import Dashboard from "./pages/dashboard/dashboard";
 import ProductCategoryPage from "./pages/inventory/category/product_category_pages";
+import ProductPage from "./pages/inventory/products/product_page";
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
 				<Route path="/dashboard" element={<Dashboard />} />
 
 				<Route path="/inventory" element={<Outlet />}>
+					<Route path="products" element={<ProductPage />} />
 					<Route path="categories" element={<ProductCategoryPage />} />
 				</Route>
 
