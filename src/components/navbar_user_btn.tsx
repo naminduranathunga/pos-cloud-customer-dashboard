@@ -8,8 +8,16 @@ import {
   } from "@/components/ui/dropdown-menu"
 import { ChevronDown } from "lucide-react";
 import usre_default_avatar from "@/assets/user_default_avatar.png";
+import useFlexaroUser from "@/lib/hooks/flexaro_user";
 
 export default function NavbarUserBtn() {
+    const { logout } = useFlexaroUser();
+
+    const handleLogout = () => {
+        logout();
+        window.location.href = "/login";
+    }
+
     return (
         
         <DropdownMenu>
@@ -26,7 +34,7 @@ export default function NavbarUserBtn() {
                 <DropdownMenuItem>Profile</DropdownMenuItem>
                 <DropdownMenuItem>Billing</DropdownMenuItem>
                 <DropdownMenuItem>Team</DropdownMenuItem>
-                <DropdownMenuItem>Logout</DropdownMenuItem>
+                <DropdownMenuItem onClick={handleLogout}>Logout</DropdownMenuItem>
             </DropdownMenuContent>
         </DropdownMenu>
     )

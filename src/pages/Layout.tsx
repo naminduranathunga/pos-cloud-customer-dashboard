@@ -1,18 +1,32 @@
 import NavigationBarComponent from "@/components/navigation_bar";
 import SideBar from "@/components/side_bar";
+import useFlexaroUser from "@/lib/hooks/flexaro_user";
+import { useEffect } from "react";
 import { Outlet } from "react-router-dom";
+import { Toaster } from "@/components/ui/toaster";
 
 
 export default function PageLayout(){
+    const {user, isLoading, error} = useFlexaroUser();
+
+    if (!isLoading && !user){
+        window.location.href = "/login";
+        return (<></>);
+    }
+
     return (
         <main className="flex w-full min-h-[100vh] flex-grow bg-green-50">
-            <SideBar />
+            {isLoading ? 
+            <>Loading...</> 
+            :
+            <><SideBar />
             <div className="w-full">
                 <NavigationBarComponent />
                 <div className="w-full px-4 pt-4">
                     <Outlet />
                 </div>
-            </div>
+            </div></>}
+            <Toaster />
         </main>
     );
 }

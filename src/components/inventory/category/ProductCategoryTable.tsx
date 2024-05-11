@@ -42,7 +42,7 @@ export default function ProductCategoryTable({searchTerm}: {searchTerm?: string}
         },
         {
             id: "4",
-            name: "Fashion",
+            name: "Fashion 2",
             parent: null
         }
     ];

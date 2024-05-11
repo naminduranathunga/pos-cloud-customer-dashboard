@@ -34,6 +34,7 @@ const useFlexaroUser = () => {
     const login = (user: FlexaroUser) => {
         localStorage.setItem("flexaro_user", JSON.stringify(user));
         setUser(user);
+        console.log("User logged in");
     }
 
     const logout = () => {
@@ -43,7 +44,7 @@ const useFlexaroUser = () => {
 
     const get_user_jwt = useCallback(()=>{
         return user?.jwt;
-    }, []);
+    }, [user]);
 
     useEffect(()=>{
         try {
