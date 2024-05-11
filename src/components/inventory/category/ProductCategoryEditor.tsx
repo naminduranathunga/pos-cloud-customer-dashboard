@@ -12,6 +12,10 @@ import {
     DialogTitle,
     DialogTrigger,
   } from "@/components/ui/dialog"
+import { Loader2 } from "lucide-react";
+import { useToast } from "@/components/ui/use-toast";
+import useFlexaroUser from "@/lib/hooks/flexaro_user";
+import config from "@/lib/config";
 
 export default function ProductCategoryEditor({category, category_list, with_trigger, onSave, onCancel, onClose}:
     {
@@ -25,11 +29,55 @@ export default function ProductCategoryEditor({category, category_list, with_tri
         
         const [cName, setCName] = useState(category.name);
         const [parent, setParent] = useState(category.parent?.id || "");
+        const [is_updating_server, setIsLoading] = useState(false);
+        const {toast} = useToast();
+        const { get_user_jwt } = useFlexaroUser();
 
         if (typeof with_trigger === "undefined") with_trigger = true;
         const onOpenChange = useCallback((open:boolean) => {
             if (!open && onClose) onClose();
         }, [onClose]);
+
+        const saveCategory = ()=>{
+            if (is_updating_server) return;
+
+            if (!cName){
+                toast({title: "Category name is required", variant: "destructive"});
+                return;
+            }
+
+            setIsLoading(true);
+
+            fetch(`${config.apiURL}/product-manager/product-category/${category.id ? "update" : "create"}`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${get_user_jwt()}`
+                },
+                body: JSON.stringify({
+                    id: category.id,
+                    name: cName,
+                    parent_id: parent
+                })
+            }).then((resp)=>{
+                if (resp.ok){
+                    return resp.json();
+                }else {
+                    throw new Error("Failed to save category");
+                }
+            }).then((data)=>{
+                const new_category: ProductCategory = {
+                    id: data._id,
+                    name: data.name,
+                    parent: data.parent
+                };
+                if (onSave) onSave(new_category);
+                setIsLoading(false);
+            }).catch((error)=>{
+                setIsLoading(false);
+                toast({title: "Failed to save category", variant: "destructive"});
+            });
+        }
 
         return (
 
@@ -48,12 +96,18 @@ export default function ProductCategoryEditor({category, category_list, with_tri
                         
                         <div className="mb-6 flex flex-col gap-2">
                             <Label> Parent </Label>
-                            <ProductCategorySelector />
+                            <ProductCategorySelector categories={category_list} onChange={(new_parent)=>{
+                                console.log("Parent changed", new_parent);
+                                setParent(new_parent);
+                            }} value={parent} />
                         </div>
 
                         <div className="flex gap-4">
-                            <Button>Save</Button>
-                            <Button variant={"outline"}>Delete</Button>
+                            <Button className="flex items-center" onClick={saveCategory}>
+                                <span>Save</span>
+                                {is_updating_server && <Loader2 className="animate-spin ms-2" size={20} />}
+                            </Button>
+                            { category.id && <Button variant={"outline"}>Delete</Button>}
                         </div>
                     </div>
                     </DialogDescription>

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Button } from "../ui/button";
 import { Checkbox } from "../ui/checkbox";
 import { Input } from "../ui/input";
@@ -6,6 +6,9 @@ import { Label } from "../ui/label";
 import { useToast } from "../ui/use-toast";
 import config from "@/lib/config";
 import useFlexaroUser, { FlexaroUser } from "@/lib/hooks/flexaro_user";
+
+
+
 
 export default function LoginPageForm() {
     const [email, setEmail] = useState("");
@@ -29,7 +32,7 @@ export default function LoginPageForm() {
         }
 
         setIsLoginLoading(true);
-        fetch(`${config.apiURL}/api/v1/login`, {
+        fetch(`${config.apiURL}/login`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"

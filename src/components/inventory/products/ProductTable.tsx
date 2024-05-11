@@ -49,7 +49,7 @@ export default function ProductTable({searchTerm}: {searchTerm?: string}){
         if (!searchTerm) return setProducts(product_list);
         const filtered = product_list.filter((category) => category.name.toLowerCase().includes(searchTerm.toLowerCase()));
         setProducts(filtered);
-    }, [searchTerm, products]);
+    }, [searchTerm, products, product_list]);
 
     const rows = products.map((product) => {
         return (

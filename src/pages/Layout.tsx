@@ -1,13 +1,12 @@
 import NavigationBarComponent from "@/components/navigation_bar";
 import SideBar from "@/components/side_bar";
 import useFlexaroUser from "@/lib/hooks/flexaro_user";
-import { useEffect } from "react";
 import { Outlet } from "react-router-dom";
 import { Toaster } from "@/components/ui/toaster";
 
 
 export default function PageLayout(){
-    const {user, isLoading, error} = useFlexaroUser();
+    const {user, isLoading} = useFlexaroUser();
 
     if (!isLoading && !user){
         window.location.href = "/login";

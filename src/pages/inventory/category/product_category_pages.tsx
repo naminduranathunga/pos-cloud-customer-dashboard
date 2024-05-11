@@ -9,14 +9,44 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
   } from "@/components/ui/dropdown-menu"
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
+import useFlexaroUser from "@/lib/hooks/flexaro_user";
+import { useToast } from "@/components/ui/use-toast";
+import config from "@/lib/config";
 
+async function fetchCategories(jwt:string): Promise<ProductCategory[]>{
+    const resp = await fetch(`${config.apiURL}/product-manager/product-category/get?populate=1`, {
+        headers: {
+            "Authorization": `Bearer ${jwt}`
+        }
+    });
+    if (resp.ok){
+        const cats = await resp.json();
+        const categories: ProductCategory[] = cats.map((cat: any) => {
+            return {
+                id: cat._id,
+                name: cat.name,
+                parent: (cat.parent? {id: cat.parent._id, name: cat.parent.name, parent: cat.parent.parent} : null)
+            }
+        });
+        return categories;
+    }else {
+        if (resp.status === 401){
+            throw new Error("Unauthorized");
+        }
+        throw new Error("Failed to fetch categories");
+    }
+}
+    
 
 export default function ProductCategoryPage(){
     const [search_term, setSearchTerm] = useState<string>("");
     const [toggleSearch, setToggleSearch] = useState<boolean>(false);
     const [toggleNewCategory, setToggleNewCategory] = useState<boolean>(false);
+    const {toast} = useToast();
+    const { get_user_jwt, isLoading } = useFlexaroUser();
+    const [categories, setCategories] = useState<ProductCategory[]|null>(null);
 
     const category: ProductCategory = {
         id: "",
@@ -27,6 +57,49 @@ export default function ProductCategoryPage(){
     const tottleSearchFn = useCallback(() => {
         setToggleSearch(!toggleSearch);
     }, [toggleSearch]);
+
+    const updateCategories = useCallback(()=>{
+        const jwt_token = get_user_jwt() ?? "";
+        fetchCategories(jwt_token).then((data)=>{
+            setCategories(data);
+        }).catch((error)=>{
+            if (error.message === "Unauthorized"){
+                toast({
+                    title: "Unauthorized",
+                    description: "You are not authorized to view this page.",
+                    variant: "destructive"
+                });
+            } else {
+                toast({
+                    title: "Error",
+                    description: "Failed to fetch categories.",
+                    variant: "destructive"
+                });
+            }
+        });
+    }, [get_user_jwt, toast]);
+
+    useEffect(()=>{
+        if (isLoading) return;
+        const jwt_token = get_user_jwt() ?? "";
+        fetchCategories(jwt_token).then((data)=>{
+            setCategories(data);
+        }).catch((error)=>{
+            if (error.message === "Unauthorized"){
+                toast({
+                    title: "Unauthorized",
+                    description: "You are not authorized to view this page.",
+                    variant: "destructive"
+                });
+            } else {
+                toast({
+                    title: "Error",
+                    description: "Failed to fetch categories.",
+                    variant: "destructive"
+                });
+            }
+        });
+    }, [get_user_jwt, isLoading, toast]);
 
     return (
         <div className="bg-white shadow-md rounded-md p-4">
@@ -52,10 +125,10 @@ export default function ProductCategoryPage(){
 
 
             <div className="grid grid-cols-1 gap-6">
-                <ProductCategoryTable searchTerm={search_term} />   
+                <ProductCategoryTable categories={categories} searchTerm={search_term} callback_update={updateCategories} />   
             </div>
 
-            {toggleNewCategory && <ProductCategoryEditor category={category} category_list={[]} with_trigger={false} onClose={()=>{setToggleNewCategory(false)}} />}
+            {toggleNewCategory && <ProductCategoryEditor category={category} category_list={categories??[]} with_trigger={false} onClose={()=>{setToggleNewCategory(false)}} onSave={(cat:any)=>{updateCategories(); setToggleNewCategory(false)}} />}
         </div>
     )
 }

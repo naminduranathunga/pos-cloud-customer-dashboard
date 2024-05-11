@@ -8,66 +8,46 @@ import {
     TableRow,
   } from "@/components/ui/table"
 import ProductCategory from "@/interfaces/product_category";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import ProductCategoryEditor from "./ProductCategoryEditor";
 
 
-export default function ProductCategoryTable({searchTerm}: {searchTerm?: string}){
+
+export default function ProductCategoryTable({categories, searchTerm, callback_update}: {categories:ProductCategory[] | null, searchTerm?: string, callback_update: () => void}){
     const [showEditor, setShowEditor] = useState(false);
     const [editingCategory, setEditingCategory] = useState<ProductCategory | null>(null);
+    
+    let categories_;
+    if (searchTerm && categories){
+        const categories_ = categories.filter((category) => category.name.toLowerCase().includes(searchTerm.toLowerCase()));
+    }else{
+        categories_ = categories;
+    }
 
-    const categories_ : ProductCategory[] = [
-        {
-            id: "1",
-            name: "Electronics",
-            parent: null
-        },
-        {
-            id: "2",
-            name: "Mobile",
-            parent: {
-                id: "1",
-                name: "Electronics",
-                parent: null
-            }
-        },
-        {
-            id: "3",
-            name: "Laptop",
-            parent: {
-                id: "1",
-                name: "Electronics",
-                parent: null
-            }
-        },
-        {
-            id: "4",
-            name: "Fashion 2",
-            parent: null
-        }
-    ];
-    const [categories, setCategories] = useState<ProductCategory[]>([]);
-
-    useEffect(()=>{
-        if (!searchTerm) return setCategories(categories_);
-        const filtered = categories_.filter((category) => category.name.toLowerCase().includes(searchTerm.toLowerCase()));
-        setCategories(filtered);
-    }, [searchTerm, categories_]);
-
-    const rows = categories.map((category) => {
-        return (
-            <TableRow key={category.id}>
-                <TableCell className="font-medium">{category.id}</TableCell>
-                <TableCell>{category.name}</TableCell>
-                <TableCell>{category.parent?.name || "-"}</TableCell>
-                <TableCell className="text-right">
-                    <button className="text-blue-500 hover:text-primary hover:underline transition"
-                        onClick={(e)=>{setEditingCategory(category);setShowEditor(true)}}
-                        >Edit</button>
-                </TableCell>
+    let rows;
+    if (categories_){
+        rows = categories_.map((category) => {
+            return (
+                <TableRow key={category.id}>
+                    <TableCell className="font-medium">{category.id}</TableCell>
+                    <TableCell>{category.name}</TableCell>
+                    <TableCell>{category.parent?.name || "-"}</TableCell>
+                    <TableCell className="text-right">
+                        <button className="text-blue-500 hover:text-primary hover:underline transition"
+                            onClick={(e)=>{setEditingCategory(category);setShowEditor(true)}}
+                            >Edit</button>
+                    </TableCell>
+                </TableRow>
+            )
+        });
+    } else {
+        // rows are loading
+        rows = (
+            <TableRow>
+                <TableCell colSpan={4} className="text-center">Loading...</TableCell>
             </TableRow>
-        )
-    });
+        );
+    }
 
     return (
         <div>
@@ -91,9 +71,9 @@ export default function ProductCategoryTable({searchTerm}: {searchTerm?: string}
 
             { showEditor && <ProductCategoryEditor 
                     category={editingCategory!} 
-                    category_list={categories} 
+                    category_list={categories??[]} 
                     with_trigger={false} 
-                    onSave={()=>{/**update the list */}} 
+                    onSave={()=>{callback_update()}} 
                     onClose={()=>setShowEditor(false)} /> }
         </div>
     )
