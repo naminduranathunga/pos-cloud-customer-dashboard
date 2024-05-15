@@ -11,6 +11,7 @@ import {
 import { useCallback, useState } from "react";
 import { Input } from "@/components/ui/input";
 import ProductTable from "@/components/inventory/products/ProductTable";
+import { Link } from "react-router-dom";
 
 export default function ProductPage() {
     const [search_term, setSearchTerm] = useState<string>("");
@@ -33,7 +34,9 @@ export default function ProductPage() {
             <header className="mb-6 flex items-center border-b border-gray-300 py-4 gap-4">
                 <h1 className="font-semibold text-lg md:text-2xl">Products</h1>
 
-                <Button className="flex items-center gap-2 ms-auto" onClick={()=>{setToggleNewCategory(true)}}> <Plus size={"1em"} /> New Product</Button>
+                <Link to={`/inventory/products/editor/`} className="flex items-center gap-2 ms-auto">
+                    <Button className="flex items-center gap-2 ms-auto" > <Plus size={"1em"} /> New Product</Button>
+                </Link>
                 <Input placeholder="Search category" value={search_term} onChange={(e) => setSearchTerm(e.target.value)} className={"max-w-[300px] " + (toggleSearch ? "block" : "hidden")} />
                 <Button className="flex items-center gap-2 hover:bg-green-900 hover:text-white transition" 
                     variant={"secondary"} 

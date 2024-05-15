@@ -9,6 +9,7 @@ import {
   } from "@/components/ui/table"
 import { ProductSimple } from "@/interfaces/products";
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 
 
 export default function ProductTable({searchTerm}: {searchTerm?: string}){
@@ -58,8 +59,7 @@ export default function ProductTable({searchTerm}: {searchTerm?: string}){
                 <TableCell>{product.name}</TableCell>
                 <TableCell>{product.sku}</TableCell>
                 <TableCell className="text-right">
-                    <button className="text-blue-500 hover:text-primary hover:underline transition"
-                        >Edit</button>
+                    <Link to={`/inventory/products/editor/${product.id}`} className="text-blue-500 hover:text-primary hover:underline transition">Edit</Link>
                 </TableCell>
             </TableRow>
         )
