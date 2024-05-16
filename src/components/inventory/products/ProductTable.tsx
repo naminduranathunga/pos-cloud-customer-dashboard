@@ -12,54 +12,23 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
 
-export default function ProductTable({searchTerm}: {searchTerm?: string}){
+export default function ProductTable({searchTerm, product_list}: {searchTerm?: string, product_list: ProductSimple[]}){
 
-    const product_list : ProductSimple[] = [
-        {
-            id: "1",
-            name: "Mobile",
-            price: 1000,
-            sku: "SKU-001",
-            category: "Electronics"
-        },
-        {
-            id: "2",
-            name: "Laptop",
-            price: 2000,
-            sku: "SKU-002",
-            category: "Electronics"
-        },
-        {
-            id: "3",
-            name: "Shirt",
-            price: 20,
-            sku: "SKU-003",
-            category: "Fashion"
-        },
-        {
-            id: "4",
-            name: "T-Shirt",
-            price: 10,
-            sku: "SKU-004",
-            category: "Fashion"
-        }
-    ];
-    const [products, setProducts] = useState<ProductSimple[]>([]);
+    
+    var products = product_list;
+    if (searchTerm){
+        products = product_list.filter((category) => category.name.toLowerCase().includes(searchTerm.toLowerCase()));
+    }
 
-    useEffect(()=>{
-        if (!searchTerm) return setProducts(product_list);
-        const filtered = product_list.filter((category) => category.name.toLowerCase().includes(searchTerm.toLowerCase()));
-        setProducts(filtered);
-    }, [searchTerm, products, product_list]);
 
     const rows = products.map((product) => {
         return (
-            <TableRow key={product.id}>
-                <TableCell className="font-medium">{product.id}</TableCell>
+            <TableRow key={product._id}>
+                <TableCell className="font-medium">{product._id}</TableCell>
                 <TableCell>{product.name}</TableCell>
                 <TableCell>{product.sku}</TableCell>
                 <TableCell className="text-right">
-                    <Link to={`/inventory/products/editor/${product.id}`} className="text-blue-500 hover:text-primary hover:underline transition">Edit</Link>
+                    <Link to={`/inventory/products/editor/${product._id}`} className="text-blue-500 hover:text-primary hover:underline transition">Edit</Link>
                 </TableCell>
             </TableRow>
         )

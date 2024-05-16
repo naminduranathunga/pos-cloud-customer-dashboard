@@ -8,15 +8,59 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
   } from "@/components/ui/dropdown-menu"
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import ProductTable from "@/components/inventory/products/ProductTable";
 import { Link } from "react-router-dom";
+import useFlexaroUser from "@/lib/hooks/flexaro_user";
+import config from "@/lib/config";
+import { ProductSimple } from "@/interfaces/products";
+import { useToast } from "@/components/ui/use-toast";
+import LoadingProductTable from "@/components/inventory/products/LoadingProductTable";
+
+
+async function get_product_list(jwt: string){
+    const resp = await fetch(`${config.apiURL}/product-manager/products/get`, {
+        headers: {
+            "Authorization": `Bearer ${jwt}`
+        }
+    });
+
+    if (resp.ok){
+        const products = await resp.json();
+        const list_products = products.map((product: any) => {
+            return {
+                _id: product._id,
+                name: product.name,
+                price: (product.prices && product.prices.length > 0 ? product.prices[0] : 0),
+                sku: product.sku,
+                category: product.category
+            }
+        });
+        return list_products;
+    } else if (resp.status === 401){
+        throw new Error("Unauthorized");
+    } else {
+        try{
+            const error = await resp.json();
+            throw new Error(error.message);
+        } catch {
+            throw new Error("Failed to fetch products");
+        }
+    }
+}
 
 export default function ProductPage() {
     const [search_term, setSearchTerm] = useState<string>("");
     const [toggleSearch, setToggleSearch] = useState<boolean>(false);
     const [toggleNewCategory, setToggleNewCategory] = useState<boolean>(false);
+    const [product_list, setProductList] = useState<ProductSimple[] | null>(null); // ProductSimple[
+    const {
+        isLoading,
+        user,
+        get_user_jwt,
+    } = useFlexaroUser();
+    const {toast} = useToast();
 
     const category: ProductCategory = {
         id: "",
@@ -27,6 +71,24 @@ export default function ProductPage() {
     const tottleSearchFn = useCallback(() => {
         setToggleSearch(!toggleSearch);
     }, [toggleSearch]);
+
+
+    useEffect(()=>{
+        if (isLoading) return;
+        const jwt = get_user_jwt();
+        if (!jwt) return;
+        get_product_list(jwt).then((data)=>{
+            setProductList(data);
+            console.log(data);
+        }).catch((error)=>{
+            toast({
+                title: "Error!",
+                //message: error.message,
+                variant:"destructive",
+            })
+            console.error(error);
+        });
+    }, [isLoading, get_user_jwt]);
 
 
     return (
@@ -55,7 +117,10 @@ export default function ProductPage() {
 
 
             <div className="grid grid-cols-1 gap-6">
-                <ProductTable searchTerm={search_term} />   
+                { product_list === null ? (<LoadingProductTable />)
+                :
+                <ProductTable searchTerm={search_term} product_list={product_list} /> }
+                  
             </div>
 
             {toggleNewCategory && <ProductCategoryEditor category={category} category_list={[]} with_trigger={false} onClose={()=>{setToggleNewCategory(false)}} />}

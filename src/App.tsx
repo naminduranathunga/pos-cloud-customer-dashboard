@@ -5,6 +5,8 @@ import Dashboard from "./pages/dashboard/dashboard";
 import ProductCategoryPage from "./pages/inventory/category/product_category_pages";
 import ProductPage from "./pages/inventory/products/product_page";
 import ProductEditorPage from "./pages/inventory/products/product_editor_page";
+import UserListPage from "./pages/users/user_list_page";
+import UserRolesListPage from "./pages/users/roles/user_roles_page";
 
 function App() {
   return (
@@ -24,6 +26,8 @@ function App() {
 				</Route>
 
 				<Route path="/users" element={<Outlet />}>
+					<Route path="" element={<UserListPage />} />
+					<Route path="roles" element={<UserRolesListPage />} />
 				</Route>
 
 
