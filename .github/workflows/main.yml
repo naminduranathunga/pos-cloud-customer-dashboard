@@ -26,4 +26,4 @@ jobs:
                   username: github@namisweb.lk
                   password: ${{ secrets.FTP_PASSWORD }}
                   local-dir: build/
-                  server-dir: /home/giftandl/adminpos.namisweb.lk/
+                  server-dir: /
