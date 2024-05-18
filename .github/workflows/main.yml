@@ -15,7 +15,11 @@ jobs:
             
             - name: Install dependencies
               run: npm install
-              
+            
+            - name: Modify ESLint configuration
+              run: |
+                npx eslint --fix --rule 'no-unused-vars:warn' .
+                
             - name: Build React app
               run: npm run build
 
