@@ -23,7 +23,7 @@ jobs:
               uses: SamKirkland/FTP-Deploy-Action@v4.3.5
               with:
                   server: ftp.namisweb.lk
-                  username: github.namisweb.lk
+                  username: github@namisweb.lk
                   password: ${{ secrets.FTP_PASSWORD }}
                   local-dir: build/
                   server-dir: /home/giftandl/adminpos.namisweb.lk/
