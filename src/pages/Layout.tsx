@@ -3,6 +3,7 @@ import SideBar from "@/components/side_bar";
 import useFlexaroUser from "@/lib/hooks/flexaro_user";
 import { Outlet } from "react-router-dom";
 import { Toaster } from "@/components/ui/toaster";
+import { ConfirmDialogProvider } from "@/components/ui/custom/confirm";
 
 
 export default function PageLayout(){
@@ -18,13 +19,17 @@ export default function PageLayout(){
             {isLoading ? 
             <>Loading...</> 
             :
-            <><SideBar />
-            <div className="w-full">
-                <NavigationBarComponent />
-                <div className="w-full px-4 pt-4">
-                    <Outlet />
+            <>
+                <SideBar />
+                <ConfirmDialogProvider>
+                <div className="w-full">
+                    <NavigationBarComponent />
+                    <div className="w-full px-4 pt-4">
+                        <Outlet />
+                    </div>
                 </div>
-            </div></>}
+                </ConfirmDialogProvider>
+            </>}
             <Toaster />
         </main>
     );

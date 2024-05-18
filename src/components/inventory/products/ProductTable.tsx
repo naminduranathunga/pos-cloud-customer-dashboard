@@ -8,7 +8,6 @@ import {
     TableRow,
   } from "@/components/ui/table"
 import { ProductSimple } from "@/interfaces/products";
-import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
 
@@ -17,7 +16,11 @@ export default function ProductTable({searchTerm, product_list}: {searchTerm?: s
     
     var products = product_list;
     if (searchTerm){
-        products = product_list.filter((category) => category.name.toLowerCase().includes(searchTerm.toLowerCase()));
+        products = product_list.filter((product) => {
+            return product.name.toLowerCase().includes(searchTerm.toLowerCase()) 
+                    || product.sku.toLowerCase().includes(searchTerm.toLowerCase())
+                        || (product.barcodes && product.barcodes.includes(searchTerm));
+        });
     }
 
 

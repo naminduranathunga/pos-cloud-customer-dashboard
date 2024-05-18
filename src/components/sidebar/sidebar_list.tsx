@@ -23,7 +23,6 @@ function get_page_element(page: PageData) {
         );
     } else {
         let sp = page.subPages as PageData[];
-        console.log("DSD", sp);
         let subPages = sp.map((subPage) => get_page_element(subPage));
         return (<Accordion type="single" collapsible>
             <AccordionItem value="item-1" className="border-none">

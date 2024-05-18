@@ -1,0 +1,18 @@
+on: pull_request
+name: 🚀 Deploy website on push
+jobs:
+    web-deploy:
+        name: Deploy website
+        runs-on: ubuntu-latest
+        steps:
+            - name: Build React app
+              run: npm run build
+
+            - name: Deploy to FTP
+              uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+              with:
+                  server: ftp.namisweb.lk
+                  username: github.namisweb.lk
+                  password: ${{ secrets.FTP_PASSWORD }}
+                  local-dir: build
+                  server-dir: /home/giftandl/adminpos.namisweb.lk

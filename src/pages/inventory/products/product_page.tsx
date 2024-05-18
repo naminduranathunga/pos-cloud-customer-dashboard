@@ -34,9 +34,11 @@ async function get_product_list(jwt: string){
                 name: product.name,
                 price: (product.prices && product.prices.length > 0 ? product.prices[0] : 0),
                 sku: product.sku,
-                category: product.category
+                category: product.category,
+                barcodes: product.barcodes,
             }
         });
+        console.log(list_products);
         return list_products;
     } else if (resp.status === 401){
         throw new Error("Unauthorized");

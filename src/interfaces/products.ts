@@ -5,6 +5,7 @@ export interface ProductSimple {
     price: number;
     sku: string;
     category: string;
+    barcodes?: string[];
 }
 
 

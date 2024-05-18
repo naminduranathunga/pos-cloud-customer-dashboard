@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Barcode, X } from "lucide-react";
-import { useCallback, useRef } from "react";
+import { RefObject, useCallback, useRef } from "react";
 
 
 export default function ProductBarcodeEditor({barcodes, onChange}:{barcodes: string[], onChange?: (barcodes: string[]) => void}){
@@ -17,6 +17,10 @@ export default function ProductBarcodeEditor({barcodes, onChange}:{barcodes: str
         console.log(JSON.stringify(b));
         if (onChange) onChange(b);
         (barcodeRef.current as HTMLInputElement).value = "";
+        setTimeout((barcodeRef:RefObject<any>)=>{
+            if (barcodeRef.current)
+                (barcodeRef.current as HTMLInputElement).focus();
+        }, 100, barcodeRef);
     }, [barcodeRef, barcodes, onChange]);
 
     const OnKeyDown = useCallback((e: React.KeyboardEvent<HTMLInputElement>)=>{
