@@ -7,6 +7,8 @@ import ProductPage from "./pages/inventory/products/product_page";
 import ProductEditorPage from "./pages/inventory/products/product_editor_page";
 import UserListPage from "./pages/users/user_list_page";
 import UserRolesListPage from "./pages/users/roles/user_roles_page";
+import EditUserRolePage from "./pages/users/roles/edit_user_role_page";
+import EditUserPage from "./pages/users/user_editor_page";
 
 function App() {
   return (
@@ -28,6 +30,8 @@ function App() {
 				<Route path="/users" element={<Outlet />}>
 					<Route path="" element={<UserListPage />} />
 					<Route path="roles" element={<UserRolesListPage />} />
+					<Route path="roles/edit" element={<EditUserRolePage />} />
+					<Route path="edit" element={<EditUserPage />} />
 				</Route>
 
 

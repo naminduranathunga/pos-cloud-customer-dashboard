@@ -1,8 +1,8 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
-import UserListTable from "@/components/users/UserTable";
-import { SimpleUser } from "@/interfaces/company_users";
+import UserAccountEditor from "@/components/users/editor/UserEditor";
+import { FullUser } from "@/interfaces/company_users";
 import config from "@/lib/config";
 import useFlexaroUser from "@/lib/hooks/flexaro_user";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu";
@@ -10,10 +10,10 @@ import { EllipsisVertical, FileDown, FileUp, Plus, Search } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
-export default function UserListPage(){
+export default function EditUserPage(){
     const [search_term, setSearchTerm] = useState<string>("");
     const [toggleSearch, setToggleSearch] = useState<boolean>(false);
-    const [users, setUsers] = useState<SimpleUser[]|null>(null);
+    const [user, setUser] = useState<FullUser | null>(null); // [1
     const {
         isLoading,
         get_user_jwt,
@@ -30,7 +30,7 @@ export default function UserListPage(){
 
     useEffect(()=>{
         if (isLoading) return;
-        if (users !== null) return;
+        if (user !== null) return;
         const jwt = get_user_jwt();
 
         fetch(`${config.apiURL}/user-manager/users/get`, {
@@ -49,14 +49,17 @@ export default function UserListPage(){
             }
             return response.json();
         }).then((users)=>{
-            setUsers(users);
+            if (users.length > 0){
+                setUser(users[0]);
+            } else {
+                
+            }
         }).catch((err)=>{
-            setUsers([]);
             console.error(err);
             toast({title: "Error", description: "Failed to load users", variant: "destructive"});
         });
 
-    }, [isLoading, get_user_jwt, toast, users]);
+    }, [isLoading, get_user_jwt, toast, user]);
 
     return (
         <div className="bg-white shadow-md rounded-md p-4">
@@ -84,7 +87,7 @@ export default function UserListPage(){
 
 
             <div className="grid grid-cols-1 gap-6">
-                <UserListTable search_term={search_term} userList={users} />
+                {user && <UserAccountEditor user={user} />}
             </div>
 
         </div>
