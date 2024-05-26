@@ -1,19 +1,19 @@
 
 
 export interface SimpleUser{
-    _id: number;
+    _id: string;
     first_name: string;
     last_name: string;
     email: string;
     role: {
-        _id: number;
+        _id: string;
         name: string;
     };
 }
 
 
 export interface SumpleUserRole {
-    _id: number;
+    _id: string;
     name: string;
     slug: string;
     description?: string;
@@ -22,7 +22,7 @@ export interface SumpleUserRole {
 
 
 export interface FullUserRole {
-    _id: number;
+    _id: string;
     name: string;
     slug: string;
     description?: string;
@@ -37,10 +37,10 @@ export interface UserRolePermission {
 };
 
 export interface FullUser{
-    _id: number;
+    _id: string;
     first_name: string;
     last_name: string;
     email: string;
-    role: FullUserRole;
-    permissions: string[];
+    role: FullUserRole|SumpleUserRole;
+    password?: string;
 }

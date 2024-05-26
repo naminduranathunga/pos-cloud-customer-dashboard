@@ -20,8 +20,8 @@ export default function UserRoleEditor({userRole, setUserRole, permissions}: {us
                 
                 <div className="flex flex-col gap-3">
                     <Label htmlFor="description">Description</Label>
-                    <textarea id="description" value={userRole.description} className="border rounded-sm" onChange={
-                        (e)=>{setUserRole({...userRole, description:e.target.value})} }/>
+                    <textarea id="description" value={userRole.description} className="w-full text-sm border rounded-sm p-3" rows={4} onChange={
+                        (e)=>{setUserRole({...userRole, description:e.target.value})} }></textarea>
                 </div>
             </div>
                 

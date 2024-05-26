@@ -15,13 +15,11 @@ import { Button } from "../ui/button";
 export default function UserListTable({userList, search_term}:{userList : SimpleUser[] | null, search_term:string}){
     
     let users = userList;
-    console.log(search_term);
-    let search_t = "" //search_term.trim().toLowerCase();
-    if (users && search_term.length > 0){
-        users = users.filter((user)=>
-            (user.email.toLowerCase().includes(search_t) 
-                || user.first_name.toLowerCase().includes(search_t) 
-                || user.role.name.toLowerCase().includes(search_t))
+    if (userList && search_term.length > 0){
+        users = userList.filter((user)=>
+            (user.email.toLowerCase().includes(search_term) 
+                || user.first_name.toLowerCase().includes(search_term) 
+                || user.role.name.toLowerCase().includes(search_term))
             );
     }
 
