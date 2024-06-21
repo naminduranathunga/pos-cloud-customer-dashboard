@@ -8,6 +8,7 @@ import {
     TableRow,
   } from "@/components/ui/table"
 import { ProductSimple } from "@/interfaces/products";
+import { Pen } from "lucide-react";
 import { Link } from "react-router-dom";
 
 
@@ -26,12 +27,12 @@ export default function ProductTable({searchTerm, product_list}: {searchTerm?: s
 
     const rows = products.map((product) => {
         return (
-            <TableRow key={product._id}>
-                <TableCell className="font-medium">{product._id}</TableCell>
+            <TableRow key={product.id}>
+                <TableCell className="font-medium">{product.id}</TableCell>
                 <TableCell>{product.name}</TableCell>
                 <TableCell>{product.sku}</TableCell>
                 <TableCell className="text-right">
-                    <Link to={`/inventory/products/editor/${product._id}`} className="text-blue-500 hover:text-primary hover:underline transition">Edit</Link>
+                    <Link to={`/inventory/products/editor/${product.id}`} className="text-blue-500 hover:text-primary hover:underline transition flex  items-center gap-2 hover:text-green-600"><Pen size={"1em"}/> Edit</Link>
                 </TableCell>
             </TableRow>
         )

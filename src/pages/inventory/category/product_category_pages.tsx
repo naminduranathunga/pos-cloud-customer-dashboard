@@ -25,9 +25,9 @@ async function fetchCategories(jwt:string): Promise<ProductCategory[]>{
         const cats = await resp.json();
         const categories: ProductCategory[] = cats.map((cat: any) => {
             return {
-                id: cat._id,
+                id: cat.id,
                 name: cat.name,
-                parent: (cat.parent? {id: cat.parent._id, name: cat.parent.name, parent: cat.parent.parent} : null)
+                parent: (cat.parent_id? {id: cat.parent_id.id, name: cat.parent_id.name, parent: cat.parent_id.parent} : null)
             }
         });
         return categories;

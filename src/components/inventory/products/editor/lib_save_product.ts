@@ -6,7 +6,7 @@ const url_update = `${config.apiURL}/product-manager/products/update`;
 
 export async function SaveProduct(product:FullProduct, jwt:string){
     let url = url_create;
-    if (product._id){
+    if (product.id){
         url = url_update;
     }
 

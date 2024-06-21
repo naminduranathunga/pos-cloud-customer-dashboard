@@ -1,6 +1,6 @@
 
 export interface ProductSimple {
-    _id: string;
+    id: string;
     name: string;
     price: number;
     sku: string;
@@ -10,7 +10,7 @@ export interface ProductSimple {
 
 
 export interface FullProduct {
-    _id: string;
+    id: string;
     name: string;
     sku: string;
     inventory_type: string;
@@ -25,7 +25,7 @@ export interface FullProduct {
 
 
 export interface ProductInventory {
-    _id: string,
+    id: string,
     date: string,
     sales_price: number,
     cost_price: number,

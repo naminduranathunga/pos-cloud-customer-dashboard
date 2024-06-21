@@ -88,7 +88,7 @@ export default function ProductEditor({product, categories, onChange}:{product:F
 
                     <div className="mb-4 flex flex-col gap-2">
                         <Label>Product Thumbnail:</Label>
-                        {product._id ? <ProductThumbnailEditor product_id={product._id} thumbnail={thumbnail} setThumbnail={setThumbnail} />
+                        {product.id ? <ProductThumbnailEditor product_id={product.id} thumbnail={thumbnail} setThumbnail={setThumbnail} />
                         : <div className="bg-gray-100 w-full h-[200px] flex items-center justify-center rounded-md">Save the product before add a thumbnail.</div>}
                     </div>
                 </div>

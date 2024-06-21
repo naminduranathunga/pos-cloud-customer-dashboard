@@ -16,7 +16,7 @@ import { useConfirm } from "@/components/ui/custom/confirm";
 
 
 const initialProduct = {
-    _id: "",
+    id: "",
     name: "",
     sku: "",
     prices: [0],
@@ -113,8 +113,8 @@ export default function ProductEditorPage() {
                     description: data.message,
                 });
             }
-            if (product_ref.current?._id === ""){
-                const newId = data._id;
+            if (product_ref.current?.id === ""){
+                const newId = data.id;
                 // navigate
                 window.location.href = `/inventory/products/editor/${newId}`;
             }
@@ -184,7 +184,7 @@ export default function ProductEditorPage() {
                 <Link to={'/inventory/products/editor/'} reloadDocument={true}  className="ms-auto">
                     <Button className="flex items-center gap-2" variant={"outline"} > <Plus size={"1em"} /> New Product</Button>
                 </Link>
-                { (product && product._id)  && 
+                { (product && product.id)  && 
                 <Button className="flex items-center gap-2" variant={"destructive"} onClick={OnClickDelete} > 
                     <Trash2 size={"1em"} /> Delete  {isSavingProduct && <Loader2 size={"1em"} className="animate-spin" />}
                 </Button>}

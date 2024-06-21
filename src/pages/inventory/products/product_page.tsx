@@ -30,7 +30,7 @@ async function get_product_list(jwt: string){
         const products = await resp.json();
         const list_products = products.map((product: any) => {
             return {
-                _id: product._id,
+                id: product.id,
                 name: product.name,
                 price: (product.prices && product.prices.length > 0 ? product.prices[0] : 0),
                 sku: product.sku,
