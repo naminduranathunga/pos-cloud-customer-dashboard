@@ -67,3 +67,10 @@ export function ConfirmDialogProvider({children}:{children:React.ReactNode}){
         </ConfirmContext.Provider>
     );
 }
+
+/**
+ * Usage:
+ 
+const {Confirm} = useConfirm();
+Confirm("Delete Product", "Are you sure you want to delete this product?", "destructive", (confirmed)=>{})
+ */

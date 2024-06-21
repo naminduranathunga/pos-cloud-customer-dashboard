@@ -20,9 +20,25 @@
                 "icon": "SquareStack"
             },
             {
-                "name": "Brands",
-                "url": "/inventory/brands",
-                "icon": "Package"
+                "name": "Inventory Manager",
+                "icon": "Package",
+                "subPages": [
+                    {
+                        "name": "Goods Received",
+                        "url": "/inventory/manager/grn",
+                        "icon": "NotebookText"
+                    },
+                    {
+                        "name": "Sales Orders",
+                        "url": "/inventory/manager/so",
+                        "icon": "NotebookText"
+                    },
+                    {
+                        "name": "Stock Transfer",
+                        "url": "/inventory/manager/stock-transfer",
+                        "icon": "NotebookText"
+                    }
+                ]
             }
         ]
     },{
@@ -49,13 +65,18 @@
         ]
     },
     {
-        "name": "Subscriptions",
-        "url": "/subscriptions",
-        "icon": "ReceiptText",
+        "name": "Company",
+        "url": "/company",
+        "icon": "Building2",
         "subPages": [
             {
+                "name": "Company Profile",
+                "url": "/company/",
+                "icon": "Building2"
+            },
+            {
                 "name": "Subscription",
-                "url": "/subscriptions",
+                "url": "/company/subscriptions",
                 "icon": "Puzzle"
             },
             {
