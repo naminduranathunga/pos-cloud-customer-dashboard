@@ -24,7 +24,7 @@ function get_page_element(page: PageData) {
     } else {
         let sp = page.subPages as PageData[];
         let subPages = sp.map((subPage) => get_page_element(subPage));
-        return (<Accordion type="single" collapsible>
+        return (<Accordion type="single" collapsible={true} defaultValue={"item-1"}>
             <AccordionItem value="item-1" className="border-none">
                 <AccordionTrigger className="lex gap-2 py-2 px-4 hover:bg-green-800 cursor-pointer transition duration-300">
                     <SideBarAccordionItem name={page.name} icon={page.icon} />

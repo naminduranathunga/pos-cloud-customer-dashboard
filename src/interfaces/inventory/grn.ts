@@ -28,7 +28,7 @@ export interface GRNAttachment{
 export interface GRNSingle {
     id?: number;
     grn_number: number|string;
-    vendor: string|Vendor;
+    vendor: string|Vendor|null;
     date: string;
     invoice_no?: string;
     status: "draft" | "completed" | "cancelled";

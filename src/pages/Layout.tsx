@@ -4,6 +4,7 @@ import useFlexaroUser from "@/lib/hooks/flexaro_user";
 import { Outlet } from "react-router-dom";
 import { Toaster } from "@/components/ui/toaster";
 import { ConfirmDialogProvider } from "@/components/ui/custom/confirm";
+import { BarcodeScannerProvider } from "@/lib/hooks/barcode_scanner";
 
 
 export default function PageLayout(){
@@ -20,15 +21,17 @@ export default function PageLayout(){
             <>Loading...</> 
             :
             <>
-                <SideBar />
-                <ConfirmDialogProvider>
-                <div className="w-full">
-                    <NavigationBarComponent />
-                    <div className="w-full px-4 pt-4">
-                        <Outlet />
+                <BarcodeScannerProvider>
+                    <SideBar />
+                    <ConfirmDialogProvider>
+                    <div className="w-full">
+                        <NavigationBarComponent />
+                        <div className="w-full px-4 pt-4">
+                            <Outlet />
+                        </div>
                     </div>
-                </div>
-                </ConfirmDialogProvider>
+                    </ConfirmDialogProvider>
+                </BarcodeScannerProvider>
             </>}
             <Toaster />
         </main>

@@ -20,6 +20,17 @@
                 "icon": "SquareStack"
             },
             {
+                "name": "Vendors",
+                "url": "/inventory/vendors",
+                "icon": "Contact"
+            },
+            
+            {
+                "name": "Customers",
+                "url": "/inventory/customers",
+                "icon": "Contact"
+            },
+            {
                 "name": "Inventory Manager",
                 "icon": "Package",
                 "subPages": [

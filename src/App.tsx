@@ -56,6 +56,17 @@ function App() {
 		
     }, [isLoading, get_user_jwt, isValidated]);
 
+	useEffect(()=>{
+		const onError = ()=>{
+			if (window.location.pathname === "/login") return;
+			//window.location.href = "/login?redirect=" + window.location.pathname;
+		}
+		document.addEventListener("flexaro_user_unauthorized", onError);
+		return ()=>{
+			document.removeEventListener("flexaro_user_unauthorized", onError);
+		}
+	}, []);
+
   return (
     <BrowserRouter>
 		<Routes>

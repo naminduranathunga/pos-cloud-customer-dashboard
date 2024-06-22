@@ -5,6 +5,9 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { GRNProduct } from "@/interfaces/inventory/grn";
 import { Check, CircleX, Pen, Trash2, X } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
+import ProductSearchBox from "./product_search_box";
+import { ProductSimple } from "@/interfaces/products";
+import { useToast } from "@/components/ui/use-toast";
 
 
 function formatCurrency(value: number){
@@ -12,12 +15,12 @@ function formatCurrency(value: number){
 }
 
 
-async function getProductBySearchTerm(searchTerm: string){
+async function getProductByProductSimple(product: ProductSimple){
     return {
         id: -1, 
         product: {
-            id: "1",
-            name: "Product 1"
+            id: product.id,
+            name: product.name
         },
         cost_price: 0,
         sales_price: 0,
@@ -51,11 +54,16 @@ function EditableProductRow({product, onChange}:{
             "destructive",
             (confirmed:boolean)=>{
                 if (confirmed){
-                    alert("Deleted " + product.product.id);
+                    onChange(null);
                 }
             }
         )
     }
+
+    useEffect(()=>{
+        setEditableProductState(product);
+    }, [product]);
+    
     return (
         <TableRow className="divide-x">
             <TableCell>{editableProductState.product.name}</TableCell>
@@ -103,49 +111,47 @@ function EditableProductRow({product, onChange}:{
 
 }
 
-export default function GRNProductTable({data, onChange}:{
+export default function GRNProductTable({data, invoice_total, onChange}:{
     data: GRNProduct[],
+    invoice_total: number,
     onChange: Function
 }){
     const inputRef = useRef<HTMLInputElement>(null);
     const [searchTerm, setSearchTerm] = useState<string>("");
+    const { toast } = useToast();
 
-    const onKeyDown = (e:KeyboardEvent) => {
-        if (e.key === "Enter"){
-            e.preventDefault();
-            AddGRNProduct();
-        }
-    }
-
-    const AddGRNProduct = ()=>{
-        if (!searchTerm){
+    const AddGRNProduct = (product:ProductSimple)=>{
+        // check if the product already exists in the suggestions
+        if (data.find((p)=>(p.product.id === product.id))){
+            toast({
+                title: "Product already exists",
+            });
             return;
         }
-        getProductBySearchTerm(searchTerm).then((product)=>{
+        getProductByProductSimple(product).then((product)=>{
             onChange([...data, product]);
             setSearchTerm("");
         });
     }
 
-    const OnChangeProducts = useCallback((product:GRNProduct, index:number)=>{
-        if (index > -1){
-            data[index] = product;
-            onChange([...data]);
+    const OnChangeProducts = useCallback((product:GRNProduct|null, index:number)=>{
+        if (index < 0) return;
+        if (!product){
+            console.log("deleting", index, data[index]);
+
+            const filtered = data.filter((_, i)=>i !== index);
+            onChange(JSON.parse(JSON.stringify(filtered)));
+            return;
         }
+        data[index] = product;
+        onChange([...data]);
     }, [data, onChange]);
 
-    useEffect(()=>{
-        if (!inputRef.current) return;
-        
-        inputRef.current?.addEventListener("keydown", onKeyDown);
-        return ()=>{
-            inputRef.current?.removeEventListener("keydown", onKeyDown);
-        }
-    }, [inputRef]);
-
+    const total = data.reduce((acc, row)=>acc + row.cost_price * row.quantity, 0);
+    const balance = total - invoice_total;
 
     return (
-        <Table>
+        <Table className="overflow-y-visible">
             <TableHeader>
                 <TableRow className="divide-x">
                     <TableHead>Product</TableHead>
@@ -153,25 +159,43 @@ export default function GRNProductTable({data, onChange}:{
                     <TableHead className="text-end">Sales Price</TableHead>
                     <TableHead className="text-end">Quantity</TableHead>
                     <TableHead className="text-end">Total cost</TableHead>
-                    <TableHead className="text-end">Actions</TableHead>
+                    <TableHead className="text-end min-w-24">Actions</TableHead>
                 </TableRow>
             </TableHeader>
             <TableBody>
-                {data.map((row: GRNProduct, index: number) => (
+                {
+                    data.length === 0 && (
+                        <TableRow className="divide-x">
+                            <TableCell colSpan={6} className="text-center">No products added</TableCell>
+                        </TableRow>
+                    )
+                }
+                {data.map((row: GRNProduct, index: number) => {
+                    console.log(row);
+                    return (
                     <EditableProductRow key={index} product={row} onChange={(product:GRNProduct)=>{OnChangeProducts(product, index)}}/>
-                ))}
+                )})}
                 
                 <TableRow className="divide-x">
                     <TableHead colSpan={4} className="text-end flex items-center gap-1">
-                        <Input value={searchTerm} onChange={(e)=>{setSearchTerm(e.target.value)}} ref={inputRef} placeholder="Search product by name or scan the barcode" />
-                        <button className="bg-green-500 text-white px-4 py-2 rounded-md ms-4" onClick={AddGRNProduct}>Add</button>
+                        <ProductSearchBox onAddProduct={AddGRNProduct} />
                     </TableHead>
                     <TableCell>-</TableCell>
                     <TableCell></TableCell>
                 </TableRow>
                 <TableRow className="divide-x">
                     <TableHead colSpan={4} className="text-end">Total</TableHead>
-                    <TableCell className="text-end text-lg max-w-8"><b>{formatCurrency(data.reduce((acc, row)=>acc + row.cost_price * row.quantity, 0))}</b></TableCell>
+                    <TableCell className="text-end text-lg max-w-8"><b>{formatCurrency(total)}</b></TableCell>
+                    <TableCell></TableCell>
+                </TableRow>
+                <TableRow className="divide-x">
+                    <TableHead colSpan={4} className="text-end">Invoice Total</TableHead>
+                    <TableCell className="text-end text-lg max-w-8"><b>{formatCurrency(invoice_total)}</b></TableCell>
+                    <TableCell></TableCell>
+                </TableRow>
+                <TableRow className="divide-x">
+                    <TableHead colSpan={4} className="text-end">Total</TableHead>
+                    <TableCell className={"text-end text-lg max-w-8" + ((balance != 0)?" text-red-500":"")}><b>{formatCurrency(balance)}</b></TableCell>
                     <TableCell></TableCell>
                 </TableRow>
             </TableBody>
