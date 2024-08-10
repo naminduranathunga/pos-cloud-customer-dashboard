@@ -67,7 +67,6 @@ export default function LoginPageForm() {
                 data: data.user,
                 jwt: data.token
             };
-            console.log(user);
             
             login(user);
             toast({

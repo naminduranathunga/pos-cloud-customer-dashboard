@@ -1,10 +1,15 @@
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { CompanyBranch } from "@/interfaces/company";
+import config from "@/lib/config";
+import get_selected_branch from "@/lib/get_selected_branch";
+import useFlexaroUser from "@/lib/hooks/flexaro_user";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu";
 import { EllipsisVertical, FileDown, FileUp, Plus, Search } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
 interface GRN {
@@ -17,38 +22,46 @@ interface GRN {
 };
 
 
-const dummy_grn: GRN[] = [
-    {
-        id: 1,
-        grn_number: 1234,
-        supplier: "Supplier 1",
-        date: "2022-01-01",
-        total: 1000,
-        status: "completed"
-    },
-    {
-        id: 2,
-        grn_number: 1235,
-        supplier: "Supplier 2",
-        date: "2022-01-02",
-        total: 2000,
-        status: "draft"
-    },
-    {
-        id: 3,
-        grn_number: 1236,
-        supplier: "Supplier 3",
-        date: "2022-01-03",
-        total: 3000,
-        status: "completed"
-    },
-];
 
+function convert_date(date: string){
+    const d = new Date(date);
+    return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`;
+}
 
 export default function GRNTable(){
     const [search_term, setSearchTerm] = useState<string>("");
     const [toggleSearch, setToggleSearch] = useState<boolean>(false);
+    const [grn_list, setGrnList] = useState<GRN[]|null>(null);
+    const {get_user_jwt, isLoading} = useFlexaroUser();
 
+    useEffect(()=>{
+        if (grn_list !== null) return;
+        if (isLoading) return;
+        const jwt = get_user_jwt();
+        if (jwt === null) return;
+
+        const branch = get_selected_branch() as CompanyBranch|null;
+        if (!branch){
+            return;
+        }
+
+        fetch(`${config.apiURL}/inventory-manager/grn/get?branch_id=${branch._id}`, {
+            headers:{
+                "Authorization": `Bearer ${jwt}`,
+            }
+        }).then((res)=>{
+            if (res.ok){
+                return res.json();
+            }else {
+                throw new Error("Error getting GRN list");
+            }
+        }).then((jsn)=>{
+            setGrnList(jsn as GRN[]);
+        }).catch((err)=>{
+            console.error(err);
+        });
+        // fetch GRN list
+    }, [get_user_jwt, isLoading]);
     return (
         <div className="bg-white shadow-md rounded-md p-4">
             <header className="mb-6 flex items-center border-b border-gray-300 py-4 gap-4">
@@ -89,12 +102,12 @@ export default function GRNTable(){
                     </TableHeader>
                     <TableBody>
                         {
-                            dummy_grn.map((grn) => {
+                            grn_list ? grn_list.map((grn: any) => {
                                 return (
                                     <TableRow key={grn.id}>
-                                        <TableCell>{grn.grn_number}</TableCell>
-                                        <TableCell>{grn.date}</TableCell>
-                                        <TableCell>{grn.status}</TableCell>
+                                        <TableCell>{grn.grn_no}</TableCell>
+                                        <TableCell>{convert_date(grn.grn_date)}</TableCell>
+                                        <TableCell>{grn.grn_total}</TableCell>
                                         <TableCell>{grn.supplier}</TableCell>
                                         <TableCell>
                                             <Link to={`/inventory/manager/grn/${grn.id}`} className="flex items-center gap-2">
@@ -103,7 +116,17 @@ export default function GRNTable(){
                                         </TableCell>
                                     </TableRow>
                                 )
-                            })
+                            }):
+                            (
+                               [...Array(5)] .map((_, i)=>
+                                <TableRow key={i}>
+                                    <TableCell><Skeleton className="h-4 w-28"/></TableCell>
+                                    <TableCell><Skeleton className="h-4 w-28"/></TableCell>
+                                    <TableCell><Skeleton className="h-4 w-28"/></TableCell>
+                                    <TableCell><Skeleton className="h-4 w-28"/></TableCell>
+                                    <TableCell><Skeleton className="h-4 w-28"/></TableCell>
+                                </TableRow>)
+                            )
                         }
                     </TableBody>
                 </Table>

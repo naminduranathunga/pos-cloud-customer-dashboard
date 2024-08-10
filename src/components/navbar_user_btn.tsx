@@ -19,7 +19,6 @@ export default function NavbarUserBtn() {
         window.location.href = "/login";
     }
     const user_data = user?.data as FullUser;
-    console.log(user);
     return (
         
         <DropdownMenu>

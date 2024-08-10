@@ -1,6 +1,5 @@
 import { Ban, Barcode, ScanBarcode } from "lucide-react";
-import { createContext, useContext, useEffect, useRef, useState } from "react";
-import { start } from "repl";
+import { createContext, useCallback, useContext, useEffect, useRef, useState } from "react";
 
 /**
  * This will check for rapid key presses and will trigger barcode scanning
@@ -38,9 +37,9 @@ export function BarcodeScannerProvider({children, default_scanner_on}:{children:
         }
     }
 
-    const ListenToKeys = (e:KeyboardEvent)=>{
+    const ListenToKeys = useCallback((e:KeyboardEvent)=>{
         if (e.key == "Enter"){
-            if (current_text.current.length > 0){
+            if (current_text.current && current_text.current.length > 0){
                 console.log("Barcode scanned: ", current_text.current);
                 document.dispatchEvent(new BarcodeScannerEvent(current_text.current));
                 current_text.current = "";
@@ -48,14 +47,14 @@ export function BarcodeScannerProvider({children, default_scanner_on}:{children:
             }
         } 
         // check if the key is a letter or number or any other allowed character
-        if (e.key.length == 1){
-            if (current_text.current.length == 0){
+        if (e.key && String(e.key).length == 1){
+            if (current_text.current && current_text.current.length == 0){
                 last_scan_time.current = Date.now();
             }
             current_text.current += e.key;
         }
 
-    }
+    }, [current_text]);
 
     useEffect(()=>{
         var interval:NodeJS.Timer|null = null;
@@ -70,7 +69,7 @@ export function BarcodeScannerProvider({children, default_scanner_on}:{children:
                 clearInterval(interval);
             }
         }
-    })
+    }, [ListenToKeys, isScanning])
 
     return (
         <BarcodeScannerContext.Provider value={{

@@ -92,7 +92,7 @@
             },
             {
                 "name": "Payments",
-                "url": "/subscriptions/payments",
+                "url": "/company/payment-options",
                 "icon": "CreditCard"
             }
         ]

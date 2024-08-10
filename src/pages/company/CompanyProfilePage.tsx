@@ -34,9 +34,17 @@ async function get_company_details(jwt:string) {
 
     const branches = (await response2.json()) as CompanyBranch[];
 
+    const response3 = await fetch(`${config.apiURL}/subscription-manager/get-subscription?company_id=${company._id}`, {
+        headers: {
+            "Authorization": `Bearer ${jwt}`
+        }
+    });
+    const subscription = await response3.json();
+    console.log("subscription", subscription);
     return {
         company,
-        branches
+        branches,
+        subscription: subscription.subscription
     }
 }
 
@@ -44,6 +52,7 @@ export default function CompanyProfilePage(){
     const [ company, setCompany ] = useState<CompanyDetails | null>(null);
     const [ branches, setBranches ] = useState<CompanyBranch[] | null>(null);
     const [ editingBranch, setEditingBranch ] = useState<CompanyBranch | null>(null); // [branch_id, branch_id, branch_id
+    const [ subscription, setSubscription ] = useState<any | null>(null);
     const { get_user_jwt, isLoading } = useFlexaroUser();
     const { toast } = useToast();
 
@@ -56,6 +65,7 @@ export default function CompanyProfilePage(){
             (data) => {
                 setCompany(data.company);
                 setBranches(data.branches);
+                setSubscription(data.subscription);
             }
         ).catch(
             (err) => {
@@ -113,17 +123,17 @@ export default function CompanyProfilePage(){
                     <hr/>
 
                     <h2 className="font-semibold text-2xl mt-4 mb-4">Selected Subscription</h2>
-                    <div className="flex gap-4">
+                    {subscription && <div className="flex gap-4">
                         <div className="w-28 h-40 bg-green-100 rounded">
 
                         </div>
                         <div className="flex flex-col gap-0" >
-                            <h3 className="text-xl font-semibold">Premium</h3>
-                            <div className="text-gray-400">Value: 3500/mo - (yearly)</div>
+                            <h3 className="text-xl font-semibold">{subscription.packageName}</h3>
+                            <div className="text-gray-400">Value: {subscription.packagePrice}/{(subscription.reccuringTime == "monthly")?"mo":"yr"} - ({subscription.reccuringTime})</div>
                             <Link reloadDocument to="/company/subscription" className="text-green-800 hover:underline mt-auto mb-4">View Details</Link>
                         </div>
 
-                    </div>
+                    </div>}
 
                 </div>
                 <div>

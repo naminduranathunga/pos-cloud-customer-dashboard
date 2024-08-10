@@ -94,7 +94,7 @@ function EditableProductRow({product, onChange}:{
                 {
                     isEditing? (
                         <>
-                            <button className="hover:text-green-500" onClick={saveChanges}><Check size={"1rem"} /></button>
+                            <button className="hover:text-green-500" onClick={saveChanges} title="Update"><Check size={"1rem"} /></button>
                             <button className="ms-4 hover:text-red-500" title="cancel" onClick={cancelEditing}><CircleX size={"1rem"} /></button>
                         </>
                     ):(

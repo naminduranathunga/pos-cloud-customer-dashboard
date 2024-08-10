@@ -16,6 +16,12 @@ import config from "./lib/config";
 import InventoryManagerLayout from "./pages/inventory/manager/InventoryManagerLayout";
 import GRNTable from "./pages/inventory/manager/grn/GRN";
 import CreateNewGRNPage from "./pages/inventory/manager/grn/newgrn";
+import VendorListPage from "./pages/inventory/vendor/vendor_list_page";
+import CustomerListPage from "./pages/inventory/customers/customers_list_page";
+import GRNViewPage from "./pages/inventory/manager/grn/grnview_page";
+import SubscriptionPage from "./pages/company/SubscriptionPage";
+import SubscriptionInvoicePage from "./pages/company/InvoicePage";
+import SubscriptionPaymentOptionsPage from "./pages/company/PaymentOptionsPage";
 
 
 async function ValidateUser(get_user_jwt:Function) {
@@ -81,9 +87,12 @@ function App() {
 						<Route path="editor/:productId?" element={<ProductEditorPage />} />
 					</Route>
 					<Route path="categories" element={<ProductCategoryPage />} />
+					<Route path="vendors" element={<VendorListPage />} />
+					<Route path="customers" element={<CustomerListPage />} />
 					<Route path="manager" element={<InventoryManagerLayout />} >
 						<Route path="grn" element={<GRNTable />} />
 						<Route path="grn/create" element={<CreateNewGRNPage />} />
+						<Route path="grn/:grnId" element={<GRNViewPage />} />
 						<Route path="*" element={<h1>Not Found</h1>} />
 					</Route>
 				</Route>
@@ -97,9 +106,9 @@ function App() {
 
 				<Route path="/company" element={<Outlet />}>
 					<Route path="" element={<CompanyProfilePage />} />
-					<Route path="roles" element={<UserRolesListPage />} />
-					<Route path="roles/edit" element={<EditUserRolePage />} />
-					<Route path="edit" element={<EditUserPage />} />
+					<Route path="subscriptions" element={<SubscriptionPage />} />
+					<Route path="subscriptions/invoice/:invoiceId" element={<SubscriptionInvoicePage />} />
+					<Route path="payment-options" element={<SubscriptionPaymentOptionsPage />} />
 				</Route>
 
 
