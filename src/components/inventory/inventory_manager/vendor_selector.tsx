@@ -13,56 +13,23 @@ import { Input } from "@/components/ui/input";
 import { Loader2 } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
+import config from "@/lib/config";
+import useFlexaroUser from "@/lib/hooks/flexaro_user";
 
-async function get_vendors(){
-    const v = [
-        {
-            id: 1,
-            name: "Vendor 1",
-        },
-        {
-            id: 2,
-            name: "Vendor 2",
-        },
-        {
-            id: 3,
-            name: "Vendor 3",
-        },
-        {
-            id: 4,
-            name: "Vendor 4",
-        },
-        {
-            id: 5,
-            name: "Vendor 5",
-        },
-        {
-            id: 6,
-            name: "Vendor 6",
-        },
-        {
-            id: 7,
-            name: "Vendor 7",
-        },
-        {
-            id: 8,
-            name: "Vendor 8",
-        },
-        {
-            id: 9,
-            name: "Vendor 9",
-        },
-        {
-            id: 10,
-            name: "Vendor 10",
-        },
-    ] as Vendor[];
+async function get_vendors(jwt: string, search?: string){
 
-    return new Promise<Vendor[]>((resolve)=>{
-        setTimeout(()=>{
-            resolve(v);
-        }, 1000);
+    const url = `${config.apiURL}/inventory-manager/vendors/get${search?"?search="+encodeURI(search):""}`;
+    const resp = await fetch(url, {
+        headers: {
+            "Authorization": `Bearer ${jwt}`
+        }
     });
+    if (!resp.ok){
+        throw new Error("Failed to fetch vendors");
+    }
+    const vendors = (await resp.json()).data as Vendor[];
+
+    return vendors;
 }
 
 export default function VendorSelector({vendor, onChange}:{vendor:string|Vendor|null, onChange:(vendor:Vendor|null)=>void}){
@@ -72,6 +39,7 @@ export default function VendorSelector({vendor, onChange}:{vendor:string|Vendor|
     const [searchValue , setSearchValue] = useState("");
     const selectBtnRef = useRef<HTMLButtonElement>(null);
     const {toast} = useToast();
+    const {isLoading, get_user_jwt} = useFlexaroUser();
 
     const ClearSelection = ()=>{
         onChange(null);
@@ -144,13 +112,28 @@ export default function VendorSelector({vendor, onChange}:{vendor:string|Vendor|
     }
 
     useEffect(()=>{
+        console.log("isDialogOpen", isDialogOpen);
         if (!isDialogOpen) {
             setSelectedIndex(-1);
             return;
         };
+
+        console.log("isLoading", isLoading);
+        if (isLoading) return;
+        console.log("fetching vendors1");
+        const jwt = get_user_jwt();
+        if (!jwt) return;
+        console.log("fetching vendors");
         setVendors(null);
-        get_vendors().then(setVendors);
-    }, [isDialogOpen]);
+        get_vendors(jwt).then(setVendors).catch((err)=>{
+            console.error(err);
+            toast({
+                title: "Error",
+                description: "An error occured while fetching vendors. Please try again later.",
+                variant: "destructive"
+            });
+        });
+    }, [isDialogOpen, isLoading, get_user_jwt]);
 
     useEffect(()=>{
         if (selectBtnRef.current){

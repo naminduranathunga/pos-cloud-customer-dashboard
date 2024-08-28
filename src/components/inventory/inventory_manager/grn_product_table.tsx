@@ -11,7 +11,7 @@ import { useToast } from "@/components/ui/use-toast";
 
 
 function formatCurrency(value: number){
-    return value.toLocaleString('en-US', {style: 'currency', currency: 'USD'});
+    return value.toLocaleString('en-US', {style: 'currency', currency: 'LKR'});
 }
 
 
@@ -68,24 +68,33 @@ function EditableProductRow({product, onChange}:{
         <TableRow className="divide-x">
             <TableCell>{editableProductState.product.name}</TableCell>
             <TableCell className="text-end">{isEditing? 
-                (<Input value={editableProductState.cost_price} onChange={(e)=>{setEditableProductState({
+                (<Input value={editableProductState.cost_price} onChange={(e)=>{
+                    let c = parseFloat(e.target.value);
+                    if (isNaN(c)) c = 0;
+                    setEditableProductState({
                     ...editableProductState,
-                    cost_price: parseFloat(e.target.value)
+                    cost_price: c
                 })}} />) :
                 formatCurrency(editableProductState.cost_price)}</TableCell>
             <TableCell className="text-end">{isEditing? 
                 (<Input value={editableProductState.sales_price} onChange={(e)=>{
+                    let c = parseFloat(e.target.value);
+                    if (isNaN(c)) c = 0;
+
                     setEditableProductState({
                         ...editableProductState,
-                        sales_price: parseFloat(e.target.value)
+                        sales_price: c
                     })
                 }} />) : 
                 formatCurrency(editableProductState.sales_price)}</TableCell>
             <TableCell className="text-end">{isEditing? 
                 (<Input value={editableProductState.quantity} onChange={(e)=>{
+                    let c = parseFloat(e.target.value);
+                    if (isNaN(c)) c = 0;
+
                     setEditableProductState({
                         ...editableProductState,
-                        quantity: parseFloat(e.target.value)
+                        quantity: c
                     })
                 }} />) : 
                 editableProductState.quantity}</TableCell>
@@ -111,9 +120,11 @@ function EditableProductRow({product, onChange}:{
 
 }
 
-export default function GRNProductTable({data, invoice_total, onChange}:{
+export default function GRNProductTable({data, invoice_total, adjusted_total, onAdjustedTotalChange, onChange}:{
     data: GRNProduct[],
     invoice_total: number,
+    adjusted_total: number,
+    onAdjustedTotalChange: Function,
     onChange: Function
 }){
     const inputRef = useRef<HTMLInputElement>(null);
@@ -148,7 +159,7 @@ export default function GRNProductTable({data, invoice_total, onChange}:{
     }, [data, onChange]);
 
     const total = data.reduce((acc, row)=>acc + row.cost_price * row.quantity, 0);
-    const balance = total - invoice_total;
+    const balance = total - invoice_total + adjusted_total;
 
     return (
         <Table className="overflow-y-visible">
@@ -191,6 +202,19 @@ export default function GRNProductTable({data, invoice_total, onChange}:{
                 <TableRow className="divide-x">
                     <TableHead colSpan={4} className="text-end">Invoice Total</TableHead>
                     <TableCell className="text-end text-lg max-w-8"><b>{formatCurrency(invoice_total)}</b></TableCell>
+                    <TableCell></TableCell>
+                </TableRow>
+                <TableRow className="divide-x">
+                    <TableHead colSpan={4} className="text-end">Invoice Total</TableHead>
+                    <TableCell className="text-end text-lg max-w-8">
+                        <input type="number" value={adjusted_total} onChange={(e)=>{
+                            let c = parseFloat(e.target.value);
+                            if (isNaN(c)) c = 0;
+                            onAdjustedTotalChange(c);
+                            }}
+                            className="w-full border rounded p-2 text-end"
+                            placeholder="Adjustments" />
+                    </TableCell>
                     <TableCell></TableCell>
                 </TableRow>
                 <TableRow className="divide-x">

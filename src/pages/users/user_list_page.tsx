@@ -63,7 +63,7 @@ export default function UserListPage(){
             <header className="mb-6 flex items-center border-b border-gray-300 py-4 gap-4">
             <h1 className="font-semibold text-lg md:text-2xl">Users</h1>
 
-            <Link to={`/users/list/create/`} className="flex items-center gap-2 ms-auto">
+            <Link to={`/users/edit`} className="flex items-center gap-2 ms-auto">
                 <Button className="flex items-center gap-2 ms-auto" > <Plus size={"1em"} /> New User</Button>
             </Link>
             <Input placeholder="Search category" value={search_term} onChange={(e) => setSearchTerm(e.target.value)} className={"max-w-[300px] " + (toggleSearch ? "block" : "hidden")} />

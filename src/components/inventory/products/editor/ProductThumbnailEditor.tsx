@@ -207,7 +207,7 @@ export default function ProductThumbnailEditor({thumbnail, setThumbnail, product
                         <img src="/assets/images/upload-image.webp" alt="" className="w-9 h-9 object-cover" />
                         <div className="text-md font-semibold text-center max-w-[80%] text-green-800">Drop you file or Click here to upload.</div>
                     </div>
-                    <input type="file" ref={uploaderRef} className="absolute inset-0 opacity-0" onChange={OnChangeImage} />
+                    <input title="Upload Image" type="file" ref={uploaderRef} className="absolute inset-0 opacity-0" onChange={OnChangeImage} />
                 </div>
 
                 <div className="flex flex-col gap-4">

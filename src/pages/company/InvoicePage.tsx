@@ -2,7 +2,6 @@ import StripeCheckoutButton from "@/components/company/subscription/checkout/Str
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { CompanyDetails } from "@/interfaces/company";
-import PayherePaymentFormInterface from "@/interfaces/subscription/payhere_payment_form_interface";
 import { CustomerUsageInvoice } from "@/interfaces/subscription/subscription_invoice";
 import config from "@/lib/config";
 import useFlexaroUser from "@/lib/hooks/flexaro_user";

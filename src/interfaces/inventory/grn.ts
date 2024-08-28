@@ -7,6 +7,7 @@ export interface GRNProduct {
     };
     cost_price: number;
     sales_price: number;
+    sale_price?: number;
     quantity: number;
 }
 

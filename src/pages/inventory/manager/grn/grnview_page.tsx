@@ -8,6 +8,7 @@ import { CompanyBranch } from "@/interfaces/company";
 import VendorSelector from "@/components/inventory/inventory_manager/vendor_selector";
 import { useParams } from "react-router-dom";
 import config from "@/lib/config";
+import { TableBody, TableHead, TableHeader, TableRow, Table, TableCell } from "@/components/ui/table";
 
 const sample_products:GRNProduct[] = [];
 
@@ -25,6 +26,12 @@ function get_formatted_date(date_:string){
     
     return `${date.getFullYear()}-${mm}-${dd}`
 }
+
+
+function formatCurrency(value: number){
+    return value.toLocaleString('en-US', {style: 'currency', currency: 'LKR'});
+}
+
 
 
 export default function GRNViewPage(){
@@ -77,12 +84,13 @@ export default function GRNViewPage(){
                 invoice_no: data.invoice_no,
                 invoice_value: data.invoice_amount,
                 total: data.total_amount,
-                adjusted_total: data.adjustment,
+                adjusted_total: parseFloat(data.adjustment),
                 notes: data.notes,
                 products: data.products,
                 status: "completed"
             }
             setGRN(grn_);
+            setGRNProductList(data.products);
         }).catch(err => {
             toast({
                 title: "Failed to fetch GRN",
@@ -102,57 +110,95 @@ export default function GRNViewPage(){
             </header>
 
 
-            { grn && (<div className="grid grid-cols-3 gap-6">
+            { grn && (<div className="grid grid-cols-3 gap-6 min-w-[800px]">
                 <table>
                     <tr>
-                        <td>GRN No.</td>
-                        <td>{grn.grn_number}</td>
+                        <td className="py-2">GRN No.</td>
+                        <td className="py-2">{grn.grn_number}</td>
                     </tr>
                     <tr>
-                        <td>GRN Date</td>
-                        <td>{grn.date}</td>
+                        <td className="py-2">GRN Date</td>
+                        <td className="py-2">{grn.date}</td>
                     </tr>
                     <tr>
-                        <td>Invoice No.</td>
-                        <td>{grn.invoice_no}</td>
-                    </tr>
-                    <tr>
-                        <td>Invoice Value</td>
-                        <td>{grn.invoice_value}</td>
+                        <td className="py-2">Invoice No.</td>
+                        <td className="py-2">{grn.invoice_no}</td>
                     </tr>
                 </table>
+
+                <table>
+                    <tr>
+                        <td className="py-2">Branch</td>
+                        <td className="py-2">{grn.grn_number}</td>
+                    </tr>
+                    <tr>
+                        <td className="py-2">Vendor:</td>
+                        <td className="py-2">{grn.vendor?.name}</td>
+                    </tr>
+                    <tr>
+                        <td className="py-2 opacity-0">-</td>
+                        <td className="py-2"></td>
+                    </tr>
+                </table>
+
+                <table>
+                    <tr>
+                        <td className="py-2">Invoice Value</td>
+                        <td className="py-2">{formatCurrency(grn.invoice_value||0)}</td>
+                    </tr>
+                    <tr>
+                        <td className="py-2">Product Total.</td>
+                        <td className="py-2">{formatCurrency(grn.total||0)}</td>
+                    </tr>
+                    <tr>
+                        <td className="py-2">Adustments</td>
+                        <td className="py-2">{formatCurrency(grn.adjusted_total||0)}</td>
+                    </tr>
+                </table>
+                
             </div>)}
             <hr className="my-4" />
-            <div className="grid grid-cols-1 gap-6">
+            <div className="w-full mb-12">
+                {
+                    grnProductList && 
+                        <Table>
+                            <TableHeader>
+                                <TableRow>
+                                    <TableHead></TableHead>
+                                    <TableHead>Item</TableHead>
+                                    <TableHead>Cost Price</TableHead>
+                                    <TableHead>Sale Price</TableHead>
+                                    <TableHead>Qty</TableHead>
+                                    <TableHead></TableHead>
+                                </TableRow>
+                            </TableHeader>
 
+                            <TableBody>
+                                {
+                                    grnProductList.map((product, index) => 
+                                        <TableRow key={index}>
+                                            <TableCell>{index + 1}</TableCell>
+                                            <TableCell>{ product.product.name }</TableCell>
+                                            <TableCell>{ formatCurrency(product.cost_price * 1)}</TableCell>
+                                            <TableCell>{ formatCurrency((product.sale_price||0) * 1)}</TableCell>
+                                            <TableCell>{ product.quantity }</TableCell>
+                                            <TableCell>{ formatCurrency(product.quantity * product.cost_price) }</TableCell>
+                                        </TableRow>
+                                    )
+                                }
+                            </TableBody>
+                        </Table>
+                }
             </div>
 
-            <div className="flex justify-end py-8">
-                <div className="p-4 bg-gray-100 rounded ">
-                    <table className="text-xl">
-                        <tr>
-                            <td>
-                                Product Total:
-                            </td>
-                            <td> Rs. 12,000.00</td>
-                        </tr>
-                        
-                        <tr>
-                            <td>
-                                Invoice Total:
-                            </td>
-                            <td> Rs. 12,000.00</td>
-                        </tr>
-                        
-                        <tr>
-                            <td>
-                                Balance:
-                            </td>
-                            <td> Rs. 0.00</td>
-                        </tr>
-                    </table>
+            {grn?.notes && <div>
+                <div className="bg-gray-100 p-6">
+                    <h2 className="text-gray-800 text-xl font-semibold">Notes:</h2>
+                    <p>{grn?.notes||"-"}</p>
                 </div>
-            </div>
+            </div>}
+
+            
         </div>
     )
 }

@@ -61,13 +61,13 @@ export default function UserAccountEditor({user, setUser, user_roles}:{user: Ful
                     <Label htmlFor="user_role">Role</Label>
                     <Select value={user.role._id} onValueChange={onChangeUserRole}>
                         <SelectTrigger className="w-full">
-                            <SelectValue placeholder="Theme" />
+                            <SelectValue placeholder="Select a role" />
                         </SelectTrigger>
                         <SelectContent>
                             {role_options}
                         </SelectContent>
                     </Select>
-                    <Link to={"/users/roles/edit?_id=" + user.role._id} target="_blank" className="text-green-800 hover:underline">View</Link>
+                    { user.role?._id && <Link to={"/users/roles/edit?_id=" + user.role._id} target="_blank" className="text-green-800 hover:underline">View</Link>}
                     
                 </div>
             </div>

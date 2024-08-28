@@ -6,6 +6,9 @@ export interface ProductSimple {
     sku: string;
     category: string;
     barcodes?: string[];
+    thumbnail?: string;
+    min_price?: number;
+    max_price?: number;
 }
 
 
@@ -25,8 +28,9 @@ export interface FullProduct {
 
 
 export interface ProductInventory {
-    id: string,
-    date: string,
+    id?: number,
+    product_id: string,
+    branch_id: string,
     sales_price: number,
     cost_price: number,
     quantity: number,

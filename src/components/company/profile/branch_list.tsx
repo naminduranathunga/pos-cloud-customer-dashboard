@@ -17,7 +17,7 @@ export default function BranchListComponent({branches}:{branches:CompanyBranch[]
                                 <h6>{branch.name}</h6>
                                 <div><Link to={`mailto:${branch.email}`} className="text-green-800 hover:underline text-sm">{branch.email}</Link></div>
                             </div>
-                            <button className="ms-auto p-3 hover:text-green-600">
+                            <button className="ms-auto p-3 hover:text-green-600" title="View Branch">
                                 <ChevronRight size={24} />
                             </button>
                         </li>

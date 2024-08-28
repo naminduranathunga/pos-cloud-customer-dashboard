@@ -13,38 +13,7 @@ import { CompanyBranch } from "@/interfaces/company";
 import VendorSelector from "@/components/inventory/inventory_manager/vendor_selector";
 import { setTimeout } from "timers/promises";
 
-const sample_products:GRNProduct[] = [
-    {
-        id: 1,
-        product: {
-            id: "1",
-            name: "Product 1"
-        },
-        cost_price: 100,
-        sales_price: 120,
-        quantity: 10
-    },
-    {
-        id: 2,
-        product: {
-            id: "2",
-            name: "Product 2"
-        },
-        cost_price: 200,
-        sales_price: 220,
-        quantity: 20
-    },
-    {
-        id: 3,
-        product: {
-            id: "3",
-            name: "Product 3"
-        },
-        cost_price: 300,
-        sales_price: 320,
-        quantity: 30
-    },
-]
+
 
 function get_formatted_date(){
     //2024-06-07
@@ -64,10 +33,7 @@ function createNewGRN(){
     // Create new GRN
     return {
         grn_number: "-1",
-        vendor: {
-            id: -1,
-            name: "",
-        } as Vendor,
+        vendor: null,
         date: get_formatted_date(),
         invoice_no: "",
         status: "draft",
@@ -103,9 +69,21 @@ export default function CreateNewGRNPage(){
         if (!branch){
             return;
         }
+
+        // invoice_value should be equal to the sum of all products cost price
+        let total = grn.products.reduce((acc, p)=>acc + (p.cost_price * p.quantity), 0);
+        const adj = (grn.adjusted_total)?grn.adjusted_total:0;
+        let inv_val = parseFloat(invoice_value);
+        if (Math.abs(total + adj - inv_val) > 0.01){
+            toast({
+                title: "Adjustment Error",
+                description: "Please check the invoice value. It should be equal to the sum of all products cost price.",
+                variant: "destructive"
+            });
+            return;
+        }
         setIsSaving(true);
 
-        let total = grn.products.reduce((acc, p)=>acc + (p.cost_price * p.quantity), 0);
         save_grn_data({
             branch_id: branch._id,
             vendor_id: grn.vendor?.id,
@@ -224,7 +202,9 @@ export default function CreateNewGRNPage(){
                     </div>
                     <div className="flex flex-col gap-2">
                         <Label htmlFor="grn_ex_notes" className="text-nowrap">Notes:</Label>
-                        <textarea placeholder="Add notes here." className="w-full border rounded p-2" rows={4}></textarea>
+                        <textarea placeholder="Add notes here." value={grn.notes||""} 
+                        onChange={(e)=>{setGRN({...grn, notes: e.target.value} as GRNSingle)}}
+                        className="w-full border rounded p-2" rows={4}></textarea>
                     </div>
                 </div>
             </div>
@@ -233,34 +213,9 @@ export default function CreateNewGRNPage(){
                 <GRNProductTable data={grn.products} onChange={(plist:GRNProduct[])=>{setGRN({
                     ...grn,
                     products: plist
-                } as GRNSingle)}} invoice_total={(invoice_value)?parseFloat(invoice_value):0}/>
-            </div>
-
-            <div className="flex justify-end py-8">
-                <div className="p-4 bg-gray-100 rounded ">
-                    <table className="text-xl">
-                        <tr>
-                            <td>
-                                Product Total:
-                            </td>
-                            <td> Rs. 12,000.00</td>
-                        </tr>
-                        
-                        <tr>
-                            <td>
-                                Invoice Total:
-                            </td>
-                            <td> Rs. 12,000.00</td>
-                        </tr>
-                        
-                        <tr>
-                            <td>
-                                Balance:
-                            </td>
-                            <td> Rs. 0.00</td>
-                        </tr>
-                    </table>
-                </div>
+                } as GRNSingle)}} invoice_total={(invoice_value)?parseFloat(invoice_value):0}
+                adjusted_total={grn.adjusted_total || 0} onAdjustedTotalChange={(val:number)=>{setGRN({...grn, adjusted_total: val} as GRNSingle)}}
+                />
             </div>
         </div>
     )

@@ -9,7 +9,6 @@ import { FullProduct } from "@/interfaces/products";
 import config from "@/lib/config";
 import useFlexaroUser from "@/lib/hooks/flexaro_user";
 import { useToast } from "@/components/ui/use-toast";
-import { log } from "console";
 import { SaveProduct } from "@/components/inventory/products/editor/lib_save_product";
 import { fetchCategories } from "@/lib/fetch_categories";
 import { useConfirm } from "@/components/ui/custom/confirm";
@@ -25,12 +24,12 @@ const initialProduct = {
     thumbnail: "",
     weight: 0,
     size: "",
-    inventory_type: "",
+    inventory_type: "nos",
     is_active: true,
 } as FullProduct;
 
 async function get_product(jwt: string, product_id: string){
-    const resp = await fetch(`${config.apiURL}/product-manager/products/get?_id=${product_id}`, {
+    const resp = await fetch(`${config.apiURL}/product-manager/products/get?id=${product_id}`, {
         headers: {
             "Authorization": `Bearer ${jwt}`
         }

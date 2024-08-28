@@ -29,6 +29,12 @@ async function get_product_list(jwt: string){
     if (resp.ok){
         const products = await resp.json();
         const list_products = products.map((product: any) => {
+            let min_price = 0;
+            let max_price = 0;
+            if (product.prices && product.prices.length > 1){
+                min_price = Math.min(...product.prices);
+                max_price = Math.max(...product.prices);
+            }
             return {
                 id: product.id,
                 name: product.name,
@@ -36,6 +42,9 @@ async function get_product_list(jwt: string){
                 sku: product.sku,
                 category: product.category,
                 barcodes: product.barcodes,
+                thumbnail: product.thumbnail,
+                min_price: min_price,
+                max_price: max_price,
             }
         });
         console.log(list_products);

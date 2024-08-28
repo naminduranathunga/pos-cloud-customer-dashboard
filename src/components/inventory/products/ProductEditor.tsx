@@ -51,7 +51,7 @@ export default function ProductEditor({product, categories, onChange}:{product:F
                     </div>
                     <div className="mb-4 flex flex-col gap-2">
                         <Label>Inventory Type<span className="text-red-500">*</span></Label>
-                        <select className="border px-4 py-2 rounded-md" value={inventory_type} onChange={(e)=>setInventoryType(e.target.value)}>
+                        <select className="border px-4 py-2 rounded-md" title="Select the inventory type." value={inventory_type} onChange={(e)=>setInventoryType(e.target.value)}>
                             <option value="nos">NOS</option>
                             <option value="kg">Kg</option>
                             <option value="cm">cm</option>
@@ -80,7 +80,7 @@ export default function ProductEditor({product, categories, onChange}:{product:F
 
                     <div className="mb-8 flex flex-col ">
                         <div className="mb-2 flex items-center justify-start gap-2">
-                            <input type="checkbox" className="w-5 h-5 rounded-md border border-gray-300" id="is_product_active" checked={is_active}  onChange={(e)=>{setIsActive(e.target.checked)}} />
+                            <input type="checkbox" className="w-5 h-5 rounded-md border border-gray-300" id="is_product_active" checked={is_active} title="Make element active or innactive."  onChange={(e)=>{setIsActive(e.target.checked)}} />
                             <Label htmlFor="is_product_active">Is Active</Label>
                         </div>
                         <span className=" text-gray-500 text-sm">Only the active products will be synced to the POS applications in your store.</span>
@@ -108,7 +108,7 @@ export default function ProductEditor({product, categories, onChange}:{product:F
             <div className="flex gap-8 mt-12">
                 <div className="w-full flex flex-col">
                     <h3 className="text-lg font-semibold mb-4">Inventory</h3>
-                    <ProductEditorInventorySummary />
+                    <ProductEditorInventorySummary product={product} />
                 </div>
                 <div></div>
             </div>

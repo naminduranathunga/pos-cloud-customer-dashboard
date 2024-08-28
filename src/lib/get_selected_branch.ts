@@ -5,3 +5,7 @@ export default function get_selected_branch(){
     }
     return branch;
 }
+
+export function remove_branch_selection(){
+    localStorage.removeItem("inventory_branch");
+}

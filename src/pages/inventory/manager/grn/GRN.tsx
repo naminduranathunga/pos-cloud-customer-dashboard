@@ -3,9 +3,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { toast } from "@/components/ui/use-toast";
 import { CompanyBranch } from "@/interfaces/company";
 import config from "@/lib/config";
-import get_selected_branch from "@/lib/get_selected_branch";
+import get_selected_branch, { remove_branch_selection } from "@/lib/get_selected_branch";
 import useFlexaroUser from "@/lib/hooks/flexaro_user";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu";
 import { EllipsisVertical, FileDown, FileUp, Plus, Search } from "lucide-react";
@@ -26,6 +27,9 @@ interface GRN {
 function convert_date(date: string){
     const d = new Date(date);
     return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`;
+}
+function formatCurrency(value: number){
+    return value.toLocaleString('en-US', {style: 'currency', currency: 'LKR'});
 }
 
 export default function GRNTable(){
@@ -53,6 +57,15 @@ export default function GRNTable(){
             if (res.ok){
                 return res.json();
             }else {
+                if (res.status === 400) {
+                    // might be invalid branch id
+                    remove_branch_selection();
+                    toast({
+                        title: "Error loading GRN list",
+                        description: "Please try reloading the page",
+                        variant: "destructive"
+                    });
+                }
                 throw new Error("Error getting GRN list");
             }
         }).then((jsn)=>{
@@ -107,8 +120,8 @@ export default function GRNTable(){
                                     <TableRow key={grn.id}>
                                         <TableCell>{grn.grn_no}</TableCell>
                                         <TableCell>{convert_date(grn.grn_date)}</TableCell>
-                                        <TableCell>{grn.grn_total}</TableCell>
-                                        <TableCell>{grn.supplier}</TableCell>
+                                        <TableCell>{formatCurrency(parseFloat(grn.total_amount))}</TableCell>
+                                        <TableCell>{grn.vendor_name}</TableCell>
                                         <TableCell>
                                             <Link to={`/inventory/manager/grn/${grn.id}`} className="flex items-center gap-2">
                                                 <Button variant={"secondary"} size={"sm"}>View</Button>
