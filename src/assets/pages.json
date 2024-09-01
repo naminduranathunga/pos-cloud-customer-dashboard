@@ -40,6 +40,11 @@
                         "icon": "NotebookText"
                     },
                     {
+                        "name": "Sales Notes",
+                        "url": "/inventory/manager/sn",
+                        "icon": "NotebookText"
+                    },
+                    {
                         "name": "Sales Orders",
                         "url": "/inventory/manager/so",
                         "icon": "NotebookText"

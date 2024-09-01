@@ -11,6 +11,7 @@ const TypingDelay = 1000;
 
 function can_be_a_barcode(text:string){
     // no spaces or special characters
+    // eslint-disable-next-line
     if (text.match(/[^\x00-\x7F]/)) return false;
     if (text.length < 6) return false;
     return true;
@@ -57,6 +58,10 @@ export default function ProductSearchBox({onAddProduct}:{onAddProduct:Function})
     const {isLoading, get_user_jwt} = useFlexaroUser();
     const {toast} = useToast();
     const [is_loading_something, setIsLoadingSomething] = useState(false);
+
+    useEffect(()=>{
+        console.log("isLoading", isLoading);
+    }, [isLoading]);
     
     const getSearchSuggesions = useCallback((searchTerm:string)=>{
         if (isLoading) return;
@@ -74,7 +79,7 @@ export default function ProductSearchBox({onAddProduct}:{onAddProduct:Function})
             setIsLoadingSomething(false);
         });
 
-    }, [isLoading, get_user_jwt, searchTerm]);
+    }, [isLoading, get_user_jwt]);
 
     const AddGRNProduct = useCallback((product?:ProductSimple)=>{
         if (product ){
@@ -125,18 +130,18 @@ export default function ProductSearchBox({onAddProduct}:{onAddProduct:Function})
             setIsLoadingSomething(false);
         });
 
-    }, [onAddProduct, inputRef, suggestions]);
+    }, [onAddProduct, inputRef, suggestions, get_user_jwt, toast, searchTerm]);
 
     
     const onKeyDown = useCallback((e:KeyboardEvent)=>{
-        if (e.key == "Enter"){
+        if (e.key === "Enter"){
             // if something is selected, add it
             if (selectedSuggestion > -1){
                 AddGRNProduct(suggestions[selectedSuggestion]);
             }else {
                 AddGRNProduct();
             }
-        } else if (e.key == "ArrowDown"){
+        } else if (e.key === "ArrowDown"){
             e.preventDefault();
             if (suggestions.length === 0) return;
             if (suggestions.length > selectedSuggestion + 1){
@@ -154,20 +159,21 @@ export default function ProductSearchBox({onAddProduct}:{onAddProduct:Function})
                 setSelectedSuggestion(suggestions.length - 1);
             }
         } else {
-            lastKeyInput.current = (new Date).getTime();
+            lastKeyInput.current = (new Date()).getTime();
             setTimeout(()=>{
                 // check 
-                if ((new Date).getTime() - lastKeyInput.current > TypingDelay){
+                if ((new Date()).getTime() - lastKeyInput.current > TypingDelay){
                     const s = inputRef.current?.value;
                     if (s && s.length > 2) getSearchSuggesions(s);
                 }
             }, TypingDelay);
         }
-    }, [lastKeyInput, suggestions, selectedSuggestion, AddGRNProduct]);
+    }, [lastKeyInput, suggestions, selectedSuggestion, AddGRNProduct, getSearchSuggesions]);
 
     useEffect(()=>{
         if (!inputRef.current) return;
-        inputRef.current.addEventListener("keydown", onKeyDown);
+        const input = inputRef.current;
+        input.addEventListener("keydown", onKeyDown);
         document.addEventListener("barcode_scanned", (e:Event)=>{
             const ee = e as BarcodeScannerEvent;
             if (inputRef.current && inputRef.current.value.length === 0){
@@ -176,9 +182,9 @@ export default function ProductSearchBox({onAddProduct}:{onAddProduct:Function})
             }
         });
         return ()=>{
-            inputRef.current?.removeEventListener("keydown", onKeyDown);
+            input.removeEventListener("keydown", onKeyDown);
         }
-    }, [inputRef, onKeyDown])
+    }, [inputRef, onKeyDown, AddGRNProduct]);
 
 
     return (
@@ -188,7 +194,7 @@ export default function ProductSearchBox({onAddProduct}:{onAddProduct:Function})
                 <div className="search-suggesions absolute top-full bg-white border rounded shadow-md w-full  px-0 text-start max-h-96 overflow-y-auto z-20">
                     <ul>
                         {
-                            suggestions.map((product, index)=>(
+                            searchTerm && suggestions.map((product, index)=>(
                                 <li key={index} className={"py-1.5 px-2.5 cursor-pointer hover:bg-green-100" + ((selectedSuggestion === index)?" bg-green-200":"")} onClick={()=>{
                                     AddGRNProduct(product);
                                 }}>{product.name}</li>

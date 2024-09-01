@@ -22,6 +22,9 @@ import GRNViewPage from "./pages/inventory/manager/grn/grnview_page";
 import SubscriptionPage from "./pages/company/SubscriptionPage";
 import SubscriptionInvoicePage from "./pages/company/InvoicePage";
 import SubscriptionPaymentOptionsPage from "./pages/company/PaymentOptionsPage";
+import SalesNotes from "./pages/inventory/manager/sn/SalesNotes";
+import SNViewPage from "./pages/inventory/manager/sn/sales_note_view_page";
+import CreateNewSNPage from "./pages/inventory/manager/sn/newSalesNote";
 
 
 async function ValidateUser(get_user_jwt:Function) {
@@ -93,6 +96,11 @@ function App() {
 						<Route path="grn" element={<GRNTable />} />
 						<Route path="grn/create" element={<CreateNewGRNPage />} />
 						<Route path="grn/:grnId" element={<GRNViewPage />} />
+						<Route path="*" element={<h1>Not Found</h1>} />
+
+						<Route path="sn" element={<SalesNotes />} />
+						<Route path="sn/create" element={<CreateNewSNPage />} />
+						<Route path="sn/:snId" element={<SNViewPage />} />
 						<Route path="*" element={<h1>Not Found</h1>} />
 					</Route>
 				</Route>

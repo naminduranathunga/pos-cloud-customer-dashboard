@@ -14,13 +14,18 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import DeleteIcon from '@/assets/icons/delete.png';
 
-interface GRN {
+interface SalesNoteMini {
     id: number;
-    grn_number: number;
-    supplier: string;
-    date: string;
-    total: number;
-    status: "draft" | "completed" | "cancelled";
+    sales_note_no: string;
+    customer_id: number|null;
+    customer_name: string|null;
+    sale_date: string;
+    total_amount: number;
+    discount: number;
+    adjustment:number;
+    tax: number;
+    delivery_fee: number;
+    status: string;
 };
 
 
@@ -33,14 +38,14 @@ function formatCurrency(value: number){
     return value.toLocaleString('en-US', {style: 'currency', currency: 'LKR'});
 }
 
-export default function GRNTable(){
-    // const [search_term, setSearchTerm] = useState<string>("");
+export default function SalesNotes(){
+    const [search_term, setSearchTerm] = useState<string>("");
     const [toggleSearch, setToggleSearch] = useState<boolean>(false);
-    const [grn_list, setGrnList] = useState<GRN[]|null>(null);
+    const [sn_list, setSnList] = useState<SalesNoteMini[]|null>(null);
     const {get_user_jwt, isLoading} = useFlexaroUser();
 
     useEffect(()=>{
-        if (grn_list !== null) return;
+        if (sn_list !== null) return;
         if (isLoading) return;
         const jwt = get_user_jwt();
         if (jwt === null) return;
@@ -50,7 +55,7 @@ export default function GRNTable(){
             return;
         }
 
-        fetch(`${config.apiURL}/inventory-manager/grn/get?branch_id=${branch._id}`, {
+        fetch(`${config.apiURL}/inventory-manager/sn/get?branch_id=${branch._id}`, {
             headers:{
                 "Authorization": `Bearer ${jwt}`,
             }
@@ -62,31 +67,31 @@ export default function GRNTable(){
                     // might be invalid branch id
                     remove_branch_selection();
                     toast({
-                        title: "Error loading GRN list",
+                        title: "Error loading Sales list",
                         description: "Please try reloading the page",
                         variant: "destructive"
                     });
                 }
-                throw new Error("Error getting GRN list");
+                throw new Error("Error getting SN list");
             }
         }).then((jsn)=>{
-            setGrnList(jsn as GRN[]);
+            setSnList(jsn as SalesNoteMini[]);
         }).catch((err)=>{
             console.error(err);
         });
         // fetch GRN list
-    }, [get_user_jwt, isLoading, grn_list]);
+    }, [get_user_jwt, isLoading, sn_list]);
     return (
         <div className="bg-white shadow-md rounded-md p-4">
             <header className="mb-6 flex items-center border-b border-gray-300 py-4 gap-4">
                 <h1 className="font-semibold text-lg md:text-2xl">
-                    Good Received Notes
+                    Sales Notes
                 </h1>
 
-                <Link to={`/inventory/manager/grn/create`} className="flex items-center gap-2 ms-auto">
-                    <Button className="flex items-center gap-2 ms-auto" > <Plus size={"1em"} /> New GRN</Button>
+                <Link to={`/inventory/manager/sn/create`} className="flex items-center gap-2 ms-auto">
+                    <Button className="flex items-center gap-2 ms-auto" > <Plus size={"1em"} /> New Sales Note</Button>
                 </Link>
-                <Input placeholder="Search category" value={"search_term"} onChange={(e) =>{}} className={"max-w-[300px] " + (toggleSearch ? "block" : "hidden")} />
+                <Input placeholder="Search category" value={search_term} onChange={(e) =>{setSearchTerm(e.target.value)}} className={"max-w-[300px] " + (toggleSearch ? "block" : "hidden")} />
                 <Button className="flex items-center gap-2 hover:bg-green-900 hover:text-white transition" 
                     variant={"secondary"} 
                     onClick={()=>{setToggleSearch(!toggleSearch)}}
@@ -103,39 +108,41 @@ export default function GRNTable(){
             </header>
 
 
-            <div className="grid grid-cols-1 gap-6">
+            <div className="grid grid-cols-1 gap-6 min-h-[500px]">
                 {
-                    grn_list && grn_list.length === 0 && <div className="min-h-[500px] w-full flex flex-col items-center justify-center">
+                    sn_list && sn_list.length === 0 && <div className="min-h-[500px] w-full flex flex-col items-center justify-center">
                         <div className="relative group flex flex-col items-center">
                             <img src={DeleteIcon} alt="" />
                             <div className="text-sm opacity-0 group-hover:opacity-60 transition"><a href="https://www.flaticon.com/free-icons/damaged" title="Damaged icons">Damaged icons created by Laura Reen - Flaticon</a></div>
                         </div>
                         
-                        <div className="font-semibold text-2xl text-green-400">You don't have any Good Received Note</div>
-                        <p className="max-w-[400px] text-gray-600">GRNs contain records of your item purchases.</p>
+                        <div className="font-semibold text-2xl text-green-400">You don't have any Sales Note</div>
+                        <p className="max-w-[400px] text-gray-600">Sales notes contains records of your individual sales.</p>
                     </div>
                 }
                 <Table>
                     <TableHeader>
                         <TableRow>
-                            <TableHead>GRN No.</TableHead>
+                            <TableHead>Sales Note No.</TableHead>
                             <TableHead>Date</TableHead>
                             <TableHead>Status</TableHead>
-                            <TableHead>Supplier</TableHead>
+                            <TableHead>Total</TableHead>
+                            <TableHead>Customer</TableHead>
                             <TableHead>Actions</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
                         {
-                            grn_list ? grn_list.map((grn: any) => {
+                            sn_list ? sn_list.map((sn: SalesNoteMini) => {
                                 return (
-                                    <TableRow key={grn.id}>
-                                        <TableCell>{grn.grn_no}</TableCell>
-                                        <TableCell>{convert_date(grn.grn_date)}</TableCell>
-                                        <TableCell>{formatCurrency(parseFloat(grn.total_amount))}</TableCell>
-                                        <TableCell>{grn.vendor_name}</TableCell>
+                                    <TableRow key={sn.id}>
+                                        <TableCell>{sn.sales_note_no}</TableCell>
+                                        <TableCell>{convert_date(sn.sale_date)}</TableCell>
+                                        <TableCell><div className="capitalize">{sn.status}</div></TableCell>
+                                        <TableCell>{formatCurrency(sn.total_amount)}</TableCell>
+                                        <TableCell>{sn.customer_name||"-"}</TableCell>
                                         <TableCell>
-                                            <Link to={`/inventory/manager/grn/${grn.id}`} className="flex items-center gap-2">
+                                            <Link to={`/inventory/manager/sn/${sn.id}`} className="flex items-center gap-2">
                                                 <Button variant={"secondary"} size={"sm"}>View</Button>
                                             </Link>
                                         </TableCell>

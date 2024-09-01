@@ -9,6 +9,7 @@ export interface ProductSimple {
     thumbnail?: string;
     min_price?: number;
     max_price?: number;
+    prices: number[];
 }
 
 

@@ -4,8 +4,10 @@ import { CompanyBranch } from "@/interfaces/company";
 import { FullProduct, ProductInventory } from "@/interfaces/products";
 import config from "@/lib/config";
 import useFlexaroUser from "@/lib/hooks/flexaro_user";
-import { get } from "http";
 import { useEffect, useState } from "react";
+import ProductStockEditorRow from "./ProductStockEditorRow";
+import { Button } from "@/components/ui/button";
+import { PlusCircle } from "lucide-react";
 
 
 async function getInventory(product_id: number, jwt:string){
@@ -39,6 +41,7 @@ async function getBranches(jwt: string){
     }
     return [];
 }
+
 export default function ProductEditorInventorySummary({product}:{product:FullProduct}) {
 
     const [inventory, setInventory] = useState<ProductInventory[]|null>(null);
@@ -46,6 +49,8 @@ export default function ProductEditorInventorySummary({product}:{product:FullPro
     const {isLoading, get_user_jwt} = useFlexaroUser();
 
     const isProductIdValid = (product.id && typeof (product.id) === "number" && product.id > 0);
+
+        
 
     useEffect(() => {
         if (!product.id || typeof(product.id) !== "number" || product.id < 1) return;
@@ -68,6 +73,7 @@ export default function ProductEditorInventorySummary({product}:{product:FullPro
         });
     }, [product.id, isLoading, get_user_jwt]);
 
+    const jwt = get_user_jwt();
     return (
         <Table>
             <TableHeader>
@@ -95,30 +101,12 @@ export default function ProductEditorInventorySummary({product}:{product:FullPro
                         ):
                         <>
                         {
-                            inventory.map((inventory) => (
-                                <TableRow key={inventory.id}>
-                                    <TableCell>
-                                        {inventory.id}
-                                    </TableCell>
-                                    <TableCell>
-                                        {
-                                            branches ? (
-                                                branches.find((branch)=> branch._id === inventory.branch_id)?.name
-                                            ) : (
-                                                inventory.branch_id
-                                            )
-                                        }
-                                    </TableCell>
-                                    <TableCell>
-                                        {inventory.sales_price}
-                                    </TableCell>
-                                    <TableCell>
-                                        {inventory.cost_price}
-                                    </TableCell>
-                                    <TableCell>
-                                        {inventory.quantity}
-                                    </TableCell>
-                                </TableRow>
+                            inventory.map((inventorySingle, index) => (
+                                <ProductStockEditorRow key={index} stock={inventorySingle} branches={branches||undefined} 
+                                onDelete={()=>{setInventory(inventory.filter((item, i)=>i !== index))} } 
+                                onChange={(newStock)=>{setInventory(inventory.map((item, i)=>i === index ? newStock : item))}}
+                                jwt={jwt||""}
+                                />
                             ))
                         }
                         </>
@@ -147,6 +135,22 @@ export default function ProductEditorInventorySummary({product}:{product:FullPro
                         </TableRow>
                     ) : (<></>)
                 }
+
+                <TableRow>
+                    <TableCell colSpan={5}>
+                        <Button onClick={()=>{
+                            if (inventory){
+                                setInventory([...(inventory as ProductInventory[]), {
+                                    product_id: product.id,
+                                    branch_id: branches ? branches[0]._id : "",
+                                    sales_price: 0,
+                                    cost_price: 0,
+                                    quantity: 0
+                                }]);
+                            }
+                        }}><PlusCircle size={"1rem"} className="text-current me-2" /> <span>Add</span></Button>
+                    </TableCell>
+                </TableRow>
             </TableBody>
         </Table>
     );
