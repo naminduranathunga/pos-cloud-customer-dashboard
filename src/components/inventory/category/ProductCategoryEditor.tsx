@@ -16,6 +16,7 @@ import { Loader2 } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import useFlexaroUser from "@/lib/hooks/flexaro_user";
 import config from "@/lib/config";
+import has_user_permissions from "@/lib/has_permissions";
 
 export default function ProductCategoryEditor({category, category_list, with_trigger, onSave, onCancel, onClose}:
     {
@@ -31,7 +32,7 @@ export default function ProductCategoryEditor({category, category_list, with_tri
         const [parent, setParent] = useState(category.parent?.id || "");
         const [is_updating_server, setIsLoading] = useState(false);
         const {toast} = useToast();
-        const { get_user_jwt } = useFlexaroUser();
+        const { get_user_jwt, user } = useFlexaroUser();
 
         if (typeof with_trigger === "undefined") with_trigger = true;
         const onOpenChange = useCallback((open:boolean) => {
@@ -107,7 +108,7 @@ export default function ProductCategoryEditor({category, category_list, with_tri
                                 <span>Save</span>
                                 {is_updating_server && <Loader2 className="animate-spin ms-2" size={20} />}
                             </Button>
-                            { category.id && <Button variant={"outline"}>Delete</Button>}
+                            { category.id && has_user_permissions(user, ['delete_product_category']) && <Button variant={"outline"}>Delete</Button>}
                         </div>
                     </div>
                     </DialogDescription>

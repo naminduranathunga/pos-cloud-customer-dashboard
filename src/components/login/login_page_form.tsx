@@ -6,6 +6,7 @@ import { Label } from "../ui/label";
 import { useToast } from "../ui/use-toast";
 import config from "@/lib/config";
 import useFlexaroUser, { FlexaroUser } from "@/lib/hooks/flexaro_user";
+import delete_all_local_storage from "./delete_all_local_storage";
 
 
 
@@ -40,7 +41,8 @@ export default function LoginPageForm() {
             body: JSON.stringify({
                 email,
                 password,
-                rememberMe
+                remember:rememberMe,
+                populate: true
             })
         }).then((res)=>{
             if(res.ok){
@@ -61,11 +63,13 @@ export default function LoginPageForm() {
                 });
             }
         }).then((data)=>{
-            
+            delete_all_local_storage();
+
             const user:FlexaroUser = {
                 id: data.user._id,
                 data: data.user,
-                jwt: data.token
+                jwt: data.token,
+                exp: data.exp
             };
             
             login(user);

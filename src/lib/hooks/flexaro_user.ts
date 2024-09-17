@@ -79,7 +79,8 @@ import { useCallback, useEffect, useState } from "react";
 export interface FlexaroUser {
     id: any,
     data: any,
-    jwt: string
+    jwt: string,
+    exp?: number,
 }
 
 const useFlexaroUser = () => {

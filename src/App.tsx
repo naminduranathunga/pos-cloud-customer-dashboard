@@ -25,6 +25,8 @@ import SubscriptionPaymentOptionsPage from "./pages/company/PaymentOptionsPage";
 import SalesNotes from "./pages/inventory/manager/sn/SalesNotes";
 import SNViewPage from "./pages/inventory/manager/sn/sales_note_view_page";
 import CreateNewSNPage from "./pages/inventory/manager/sn/newSalesNote";
+import GenerateSalesReportsPage from "./pages/reports/sales_report/generate_sales_report";
+import GenerateInventoryReportsPage from "./pages/reports/inventory_report/generate_inventory_report";
 
 
 async function ValidateUser(get_user_jwt:Function) {
@@ -103,6 +105,13 @@ function App() {
 						<Route path="sn/:snId" element={<SNViewPage />} />
 						<Route path="*" element={<h1>Not Found</h1>} />
 					</Route>
+				</Route>
+
+				
+
+				<Route path="/reports" element={<Outlet />}>
+					<Route path="sales" element={<GenerateSalesReportsPage />} />
+					<Route path="inventory" element={<GenerateInventoryReportsPage />} />
 				</Route>
 
 				<Route path="/users" element={<Outlet />}>

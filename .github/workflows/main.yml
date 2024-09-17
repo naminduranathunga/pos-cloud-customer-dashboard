@@ -1,7 +1,7 @@
 on: 
     push: 
         branches: 
-            - development
+            - main
             
 name: 🚀 Deploy website on push
 jobs:
@@ -26,8 +26,8 @@ jobs:
             - name: Deploy to FTP
               uses: SamKirkland/FTP-Deploy-Action@v4.3.5
               with:
-                  server: ftp.namisweb.lk
-                  username: github@namisweb.lk
+                  server: 13.232.156.155
+                  username: namindu
                   password: ${{ secrets.FTP_PASSWORD }}
                   local-dir: build/
-                  server-dir: /
+                  server-dir: /customer_dashbd

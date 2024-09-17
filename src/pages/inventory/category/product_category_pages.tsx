@@ -14,6 +14,7 @@ import { Input } from "@/components/ui/input";
 import useFlexaroUser from "@/lib/hooks/flexaro_user";
 import { useToast } from "@/components/ui/use-toast";
 import config from "@/lib/config";
+import has_user_permissions from "@/lib/has_permissions";
 
 async function fetchCategories(jwt:string): Promise<ProductCategory[]>{
     const resp = await fetch(`${config.apiURL}/product-manager/product-category/get?populate=1`, {
@@ -45,7 +46,7 @@ export default function ProductCategoryPage(){
     const [toggleSearch, setToggleSearch] = useState<boolean>(false);
     const [toggleNewCategory, setToggleNewCategory] = useState<boolean>(false);
     const {toast} = useToast();
-    const { get_user_jwt, isLoading } = useFlexaroUser();
+    const { get_user_jwt, isLoading, user } = useFlexaroUser();
     const [categories, setCategories] = useState<ProductCategory[]|null>(null);
 
     const category: ProductCategory = {
@@ -101,12 +102,17 @@ export default function ProductCategoryPage(){
         });
     }, [get_user_jwt, isLoading, toast]);
 
+    const has_edit_permission = has_user_permissions(user, 'update_product_category');
+
     return (
         <div className="bg-white shadow-md rounded-md p-4">
             <header className="mb-6 flex items-center border-b border-gray-300 py-4 gap-4">
-                <h1 className="font-semibold text-lg md:text-2xl">Product Categories</h1>
+                <h1 className="font-semibold text-lg md:text-2xl me-auto">Product Categories</h1>
 
-                <Button className="flex items-center gap-2 ms-auto" onClick={()=>{setToggleNewCategory(true)}}> <Plus size={"1em"} /> New Category</Button>
+                {
+                    has_user_permissions(user, 'create_product_category') &&
+                    <Button className="flex items-center gap-2" onClick={()=>{setToggleNewCategory(true)}}> <Plus size={"1em"} /> New Category</Button>
+                }
                 <Input placeholder="Search category" value={search_term} onChange={(e) => setSearchTerm(e.target.value)} className={"max-w-[300px] " + (toggleSearch ? "block" : "hidden")} />
                 <Button className="flex items-center gap-2 hover:bg-green-900 hover:text-white transition" 
                     variant={"secondary"} 
@@ -125,7 +131,7 @@ export default function ProductCategoryPage(){
 
 
             <div className="grid grid-cols-1 gap-6">
-                <ProductCategoryTable categories={categories} searchTerm={search_term} callback_update={updateCategories} />   
+                <ProductCategoryTable categories={categories} searchTerm={search_term} callback_update={updateCategories} allowEdit={has_edit_permission} />   
             </div>
 
             {toggleNewCategory && <ProductCategoryEditor category={category} category_list={categories??[]} with_trigger={false} onClose={()=>{setToggleNewCategory(false)}} onSave={(cat:any)=>{updateCategories(); setToggleNewCategory(false)}} />}

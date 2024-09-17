@@ -130,7 +130,7 @@ export default function CompanyProfilePage(){
                         <div className="flex flex-col gap-0" >
                             <h3 className="text-xl font-semibold">{subscription.packageName}</h3>
                             <div className="text-gray-400">Value: {subscription.packagePrice}/{(subscription.reccuringTime == "monthly")?"mo":"yr"} - ({subscription.reccuringTime})</div>
-                            <Link reloadDocument to="/company/subscription" className="text-green-800 hover:underline mt-auto mb-4">View Details</Link>
+                            <Link reloadDocument to="/company/subscriptions" className="text-green-800 hover:underline mt-auto mb-4">View Details</Link>
                         </div>
 
                     </div>}

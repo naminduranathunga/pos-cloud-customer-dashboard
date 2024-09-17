@@ -1,10 +1,12 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import useFlexaroUser from "@/lib/hooks/flexaro_user";
 import { useToast } from "@/components/ui/use-toast";
 import { useParams } from "react-router-dom";
 import config from "@/lib/config";
 import { TableBody, TableHead, TableHeader, TableRow, Table, TableCell } from "@/components/ui/table";
 import { SalesNoteInterface } from "@/interfaces/inventory/sales_notes";
+import { Button } from "@/components/ui/button";
+import { Printer } from "lucide-react";
 
 
 function get_formatted_date(date_:string){
@@ -28,6 +30,31 @@ function formatCurrency(value: number){
 }
 
 
+function PrintElem(elem:any)
+{
+    var mywindow = window.open('', 'PRINT', 'height=400,width=600');
+    if (!mywindow) {
+        return false;
+    }
+
+    // get stylesheets
+    
+    mywindow.document.write('<html><head><title>' + document.title  + '</title>');
+    mywindow.document.write('</head><body >');
+    mywindow.document.write('<h1>' + document.title  + '</h1>');
+    mywindow.document.write(elem.innerHTML);
+    mywindow.document.write('</body></html>');
+    mywindow.document.head.innerHTML = document.head.innerHTML;
+
+    mywindow.document.close(); // necessary for IE >= 10
+    mywindow.focus(); // necessary for IE >= 10*/
+
+    mywindow.print();
+    mywindow.close();
+
+    return true;
+}
+
 
 export default function SNViewPage(){
     const {snId} = useParams() as {snId: string};
@@ -35,6 +62,23 @@ export default function SNViewPage(){
     const [loadingSN, setLoadingSN] = useState(false);
     const {isLoading, get_user_jwt} = useFlexaroUser();
     const {toast} = useToast();
+
+    const printSN = useCallback(() => {
+        PrintElem(document.getElementById("sales-note"));
+    }, []);
+
+    useEffect(()=>{
+        const handleKeyDown = (e:KeyboardEvent) => {
+            if (e.key === "p" && e.ctrlKey){
+                e.preventDefault();
+                printSN();
+            }
+        }
+        window.addEventListener("keydown", handleKeyDown);
+        return () => {
+            window.removeEventListener("keydown", handleKeyDown);
+        }
+    })
 
     useEffect(()=>{
         if (isLoading) return;
@@ -77,9 +121,13 @@ export default function SNViewPage(){
 
 
     return (
-        <div className="bg-white shadow-md rounded-md p-4">
+        <div className="bg-white shadow-md rounded-md p-4" id="sales-note">
             <header className="mb-6 flex items-center border-b border-gray-300 py-4 gap-4">
-                <h1 className="font-semibold text-lg md:text-2xl">{salesNote?salesNote.sales_note_no:"SN-####"}</h1>
+                <h1 className="font-semibold text-lg md:text-2xl me-auto">{salesNote?salesNote.sales_note_no:"SN-####"}</h1>
+
+                <Button onClick={printSN} variant={"secondary"}>
+                    {<Printer size={20}/>}
+                </Button>
             </header>
 
 

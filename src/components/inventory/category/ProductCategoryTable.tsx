@@ -13,7 +13,7 @@ import ProductCategoryEditor from "./ProductCategoryEditor";
 
 
 
-export default function ProductCategoryTable({categories, searchTerm, callback_update}: {categories:ProductCategory[] | null, searchTerm?: string, callback_update: () => void}){
+export default function ProductCategoryTable({categories, searchTerm, callback_update, allowEdit}: {categories:ProductCategory[] | null, searchTerm?: string, callback_update: () => void, allowEdit?: boolean}){
     const [showEditor, setShowEditor] = useState(false);
     const [editingCategory, setEditingCategory] = useState<ProductCategory | null>(null);
     
@@ -33,9 +33,9 @@ export default function ProductCategoryTable({categories, searchTerm, callback_u
                     <TableCell>{category.name}</TableCell>
                     <TableCell>{category.parent?.name || "-"}</TableCell>
                     <TableCell className="text-right">
-                        <button className="text-blue-500 hover:text-primary hover:underline transition"
+                        { (allowEdit === true) && <button className="text-blue-500 hover:text-primary hover:underline transition"
                             onClick={(e)=>{setEditingCategory(category);setShowEditor(true)}}
-                            >Edit</button>
+                            >Edit</button>}
                     </TableCell>
                 </TableRow>
             )
@@ -69,7 +69,7 @@ export default function ProductCategoryTable({categories, searchTerm, callback_u
 
             </div>
 
-            { showEditor && <ProductCategoryEditor 
+            { (allowEdit === true) && showEditor && <ProductCategoryEditor 
                     category={editingCategory!} 
                     category_list={categories??[]} 
                     with_trigger={false} 

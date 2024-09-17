@@ -17,6 +17,7 @@ import config from "@/lib/config";
 import { ProductSimple } from "@/interfaces/products";
 import { useToast } from "@/components/ui/use-toast";
 import LoadingProductTable from "@/components/inventory/products/LoadingProductTable";
+import has_user_permissions from "@/lib/has_permissions";
 
 
 async function get_product_list(jwt: string){
@@ -105,11 +106,11 @@ export default function ProductPage() {
     return (
         <div className="bg-white shadow-md rounded-md p-4">
             <header className="mb-6 flex items-center border-b border-gray-300 py-4 gap-4">
-                <h1 className="font-semibold text-lg md:text-2xl">Products</h1>
+                <h1 className="font-semibold text-lg md:text-2xl me-auto">Products</h1>
 
-                <Link to={`/inventory/products/editor/`} className="flex items-center gap-2 ms-auto">
-                    <Button className="flex items-center gap-2 ms-auto" > <Plus size={"1em"} /> New Product</Button>
-                </Link>
+                {(has_user_permissions(user, "create_product") === true) && <Link to={`/inventory/products/editor/`} className="flex items-center gap-2 ms-auto">
+                    <Button className="flex items-center gap-2" > <Plus size={"1em"} /> New Product</Button>
+                </Link>}
                 <Input placeholder="Search category" value={search_term} onChange={(e) => setSearchTerm(e.target.value)} className={"max-w-[300px] " + (toggleSearch ? "block" : "hidden")} />
                 <Button className="flex items-center gap-2 hover:bg-green-900 hover:text-white transition" 
                     variant={"secondary"} 

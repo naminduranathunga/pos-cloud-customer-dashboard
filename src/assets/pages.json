@@ -60,8 +60,19 @@
     },{
         "name": "Reports",
         "url": "/reports",
-        "icon": "AreaChart"
-
+        "icon": "AreaChart",
+        "subPages": [
+            {
+                "name": "Sales Report",
+                "url": "/reports/sales",
+                "icon": "NotebookText"
+            },
+            {
+                "name": "Inventory Report",
+                "url": "/reports/inventory",
+                "icon": "NotebookText"
+            }
+        ]
     },
     {
         "name": "Users",
@@ -84,6 +95,7 @@
         "name": "Company",
         "url": "/company",
         "icon": "Building2",
+        "permissions": ["compay-admin"],
         "subPages": [
             {
                 "name": "Company Profile",
