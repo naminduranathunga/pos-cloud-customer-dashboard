@@ -30,4 +30,4 @@ jobs:
                   username: namindu
                   password: ${{ secrets.FTP_PASSWORD }}
                   local-dir: build/
-                  server-dir: /customer_dashbd
+                  server-dir: /customer_dashbd/
