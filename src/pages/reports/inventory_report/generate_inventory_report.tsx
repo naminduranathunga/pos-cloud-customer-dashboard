@@ -12,6 +12,7 @@ export default function GenerateInventoryReportsPage(){
     const [branchList, setBranchList] = useState<CompanyBranch[]>([]);
     const { user, isLoading, get_user_jwt } = useFlexaroUser();
 
+
     useEffect(()=>{
         if (isLoading) return;
         const jwt = get_user_jwt();
